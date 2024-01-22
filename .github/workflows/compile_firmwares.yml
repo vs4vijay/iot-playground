@@ -58,7 +58,7 @@ jobs:
           #     version: 1.0.6
           # fqbn: esp32:esp32:m5stack-core-esp32
           sketch-paths: |
-            - ./viz.ino
+            - viz.ino
           libraries: |
             - 
           enable-deltas-report: true
@@ -121,16 +121,16 @@ jobs:
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output m5stick-nemo.m5cardputer.bin \
-            0x0000 build/m5stack.esp32.m5stack_cardputer/m5stick-nemo.ino.bootloader.bin \
-            0x8000 build/m5stack.esp32.m5stack_cardputer/m5stick-nemo.ino.partitions.bin \
-            0x10000 build/m5stack.esp32.m5stack_cardputer/m5stick-nemo.ino.bin
+          esptool.py --chip esp32s3 merge_bin --output OneButton.m5stack_stickc_plus2.bin \
+            0x0000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bootloader.bin \
+            0x8000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.partitions.bin \
+            0x10000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bin
 
         
-      - name: Upload M5Cardputer firmware
+      - name: Upload OneButton firmware
         uses: actions/upload-artifact@v4
         with:
-          path: OneButton.m5cardputer.bin
+          path: OneButton.m5stack_stickc_plus2.bin
           name: OneButton
           compression-level: 0
           # if-no-files-found: error
