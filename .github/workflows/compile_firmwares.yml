@@ -43,7 +43,7 @@ jobs:
           compression-level: 0
           # if-no-files-found: error
   
-  compile_viz_sketch:
+  compile_vizard_sketch:
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +58,7 @@ jobs:
           #     version: 1.0.6
           # fqbn: esp32:esp32:m5stack-core-esp32
           sketch-paths: |
-            - viz.ino
+            - ./vizard/vizard.ino
           libraries: |
             - 
           enable-deltas-report: true
@@ -68,11 +68,34 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: viz.ino.bin
-          name: viz
+          path: vizard.ino.bin
+          name: vizard
           compression-level: 0
           # if-no-files-found: error
+  
+  compile_demo_sketch:
+    runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile demo sketch on ESP32
+        uses: arduino/compile-sketches@v1
+        with:
+          sketch-paths: |
+            - ./demo/demo.ino
+          libraries: |
+            - 
+          enable-deltas-report: true
+          enable-warnings-report: true
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+        
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: demo.ino.bin
+          name: demo
+          compression-level: 0
 
   compile_one_button_sketch:
     runs-on: ubuntu-latest
