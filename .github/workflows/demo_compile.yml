@@ -1,0 +1,140 @@
+---
+name: Demo Compile Sketch
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+    # paths:
+    #   - 'demo_sketch/**'
+  pull_request:
+    branches:
+      - main
+  
+
+jobs:
+  compile_demo_sketch_og:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile demo sketch
+        uses: arduino/compile-sketches@v1
+        with:
+          sketch-paths: |
+            - ./demo/demo.ino
+          libraries: |
+            - 
+          enable-deltas-report: true
+          enable-warnings-report: true
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+      - run: |
+          set -x -e
+          pwd
+          ls -all
+          tree
+        
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: demo/demo.ino.bin
+          name: demo_og
+          compression-level: 0
+  
+  compile_demo_sketch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+      
+      # TODO: Linting
+      # TODO: Testing
+
+      - name: Install platform
+        run: |
+          set -x
+          # arduino-cli core install esp32:esp32
+          arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
+
+          arduino-cli core search m5stack
+          arduino-cli board listall
+
+          arduino-cli lib install M5Cardputer --log-level warn --verbose
+          arduino-cli lib install IRRemoteESP8266 --log-level warn --verbose 
+      
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+
+      - name: Compile Sketch
+        run: |
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              --libraries M5Cardputer,IRRemoteESP8266 \
+                              ./demo/demo.ino
+      
+      - name: Create firmware
+        run: |
+          set -x
+
+          esptool.py --chip esp32s3 merge_bin --output demo.bin  \
+            0x0000 build/m5stack.esp32.m5stack_cardputer/demo.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/demo.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/demo.ino.bin
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x -e
+          pwd
+          tree
+
+      # TODO: Validate
+        
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: demo.bin
+          name: demo
+
+  create_release:
+    runs-on: ubuntu-latest
+    environment: release
+    needs: [compile_demo_sketch]
+
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: demo
+        merge-multiple: true
+
+    - run: |
+        set -x -e
+        pwd
+        ls -all
+        tree
+    
+    # - uses: ncipollo/release-action@v1
+    #   with:
+    #     artifacts: "M5Nemo-M5Cardputer.bin"
+    #     name: "Test Release"
+    #     draft: true
+    #     generateReleaseNotes: true
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: test_release_1
+        files: |
+          demo.bin
+

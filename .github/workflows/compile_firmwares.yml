@@ -22,11 +22,6 @@ jobs:
       - name: Compile demo sketch on ESP32
         uses: arduino/compile-sketches@v1
         with:
-          # platforms: | 
-          #   - name: esp32:esp32
-          #     source-url: https://dl.espressif.com/dl/package_esp32_index.json
-          #     version: 1.0.6
-          # fqbn: esp32:esp32:m5stack-core-esp32
           sketch-paths: |
             - ./iot-playground.ino
           libraries: |
@@ -49,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compile demo sketch on ESP32
+      - name: Compile vizard sketch on ESP32
         uses: arduino/compile-sketches@v1
         with:
           # platforms: | 
@@ -68,34 +63,10 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: vizard.ino.bin
+          path: vizard/vizard.ino.bin
           name: vizard
           compression-level: 0
           # if-no-files-found: error
-  
-  compile_demo_sketch:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Compile demo sketch on ESP32
-        uses: arduino/compile-sketches@v1
-        with:
-          sketch-paths: |
-            - ./demo/demo.ino
-          libraries: |
-            - 
-          enable-deltas-report: true
-          enable-warnings-report: true
-          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
-        
-      - name: Upload firmware
-        uses: actions/upload-artifact@v4
-        with:
-          path: demo.ino.bin
-          name: demo
-          compression-level: 0
 
   compile_one_button_sketch:
     runs-on: ubuntu-latest
@@ -158,62 +129,3 @@ jobs:
           compression-level: 0
           # if-no-files-found: error
 
-  # compile_m5cardputer_sketch:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Setup Arduino CLI
-  #       uses: arduino/setup-arduino-cli@v1
-
-  #     - name: Install platform
-  #       run: |
-  #         set -x
-  #         # arduino-cli core install esp32:esp32
-  #         arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
-
-  #         arduino-cli core search m5stack
-  #         arduino-cli board listall
-
-  #         arduino-cli lib install M5Cardputer --log-level warn --verbose
-  #         arduino-cli lib install IRRemoteESP8266 --log-level warn --verbose
-          
-  #     - name: Install esptool
-  #       run: |
-  #         set -x
-  #         pip install -U esptool
-
-  #     - name: Compile M5Cardputer Sketch
-  #       run: |
-  #         arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
-  #                             --build-property build.partitions=huge_app \
-  #                             --build-property upload.maximum_size=3145728 \
-  #                             --libraries M5Cardputer,IRRemoteESP8266 \
-  #                             ./m5stick-nemo.ino
-      
-  #     - name: Create firmware
-  #       run: |
-  #         set -x
-
-  #         esptool.py --chip esp32s3 merge_bin --output m5stick-nemo.m5cardputer.bin \
-  #           0x0000 build/m5stack.esp32.m5stack_cardputer/m5stick-nemo.ino.bootloader.bin \
-  #           0x8000 build/m5stack.esp32.m5stack_cardputer/m5stick-nemo.ino.partitions.bin \
-  #           0x10000 build/m5stack.esp32.m5stack_cardputer/m5stick-nemo.ino.bin
-
-
-  #     - name: List all files
-  #       if: always()
-  #       continue-on-error: true
-  #       run: |
-  #         set -x -e
-  #         pwd
-  #         tree
-        
-  #     - name: Upload M5Cardputer firmware
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         path: m5stick-nemo.m5cardputer.bin
-  #         name: m5stick-nemo.m5cardputer
-  #         compression-level: 0
-  #         # if-no-files-found: error
