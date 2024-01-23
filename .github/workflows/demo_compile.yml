@@ -86,7 +86,7 @@ jobs:
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output demo.bin  \
+          esptool.py --chip esp32s3 merge_bin --output demo/demo.bin  \
             0x0000 demo/build/m5stack.esp32.m5stack_cardputer/demo.ino.bootloader.bin \
             0x8000 demo/build/m5stack.esp32.m5stack_cardputer/demo.ino.partitions.bin \
             0x10000 demo/build/m5stack.esp32.m5stack_cardputer/demo.ino.bin
