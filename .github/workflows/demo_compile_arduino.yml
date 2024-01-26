@@ -12,6 +12,8 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - demo/**
   
 jobs:
   compile_demo_sketch_og:
@@ -43,6 +45,7 @@ jobs:
           path: demo/demo.ino.bin
           name: demo.og
           compression-level: 0
+          if-no-files-found: error
   
   compile_demo_sketch:
     runs-on: ubuntu-latest
@@ -105,3 +108,4 @@ jobs:
         with:
           path: demo/demo.bin
           name: demo
+          if-no-files-found: error

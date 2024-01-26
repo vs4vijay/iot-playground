@@ -12,39 +12,39 @@ on:
       - main
 
 jobs:
-  compile_playground_sketch:
-    runs-on: ubuntu-latest
+  # compile_playground_sketch:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Compile demo sketch on ESP32
-        uses: arduino/compile-sketches@v1
-        with:
-          sketch-paths: |
-            - ./iot-playground.ino
-          libraries: |
-            - 
-          enable-deltas-report: true
-          enable-warnings-report: true
-          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+  #     - name: Compile demo sketch on ESP32
+  #       uses: arduino/compile-sketches@v1
+  #       with:
+  #         sketch-paths: |
+  #           - ./iot-playground.ino
+  #         libraries: |
+  #           - 
+  #         enable-deltas-report: true
+  #         enable-warnings-report: true
+  #         sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
       
-      - name: List all files
-        if: always()
-        continue-on-error: true
-        run: |
-          set -x -e
-          pwd
-          ls -all
-          tree
+  #     - name: List all files
+  #       if: always()
+  #       continue-on-error: true
+  #       run: |
+  #         set -x -e
+  #         pwd
+  #         ls -all
+  #         tree
         
-      - name: Upload firmware
-        uses: actions/upload-artifact@v4
-        with:
-          path: iot-playground.ino.bin
-          name: iot-playground
-          compression-level: 0
-          if-no-files-found: error
+  #     - name: Upload firmware
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         path: iot-playground.ino.bin
+  #         name: iot-playground
+  #         compression-level: 0
+  #         if-no-files-found: error
 
   compile_one_button_sketch:
     runs-on: ubuntu-latest
@@ -118,7 +118,7 @@ jobs:
           path: OneButton-${{ steps.version.outputs.version }}-M5StickCPlus2.bin
           name: OneButton (M5StickCPlus2)
           compression-level: 0
-          # if-no-files-found: error
+          if-no-files-found: error
 
   create_release:
     runs-on: ubuntu-latest
