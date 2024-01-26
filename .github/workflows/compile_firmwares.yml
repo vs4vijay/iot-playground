@@ -10,7 +10,6 @@ on:
   pull_request:
     branches:
       - main
-  
 
 jobs:
   compile_playground_sketch:
@@ -29,6 +28,15 @@ jobs:
           enable-deltas-report: true
           enable-warnings-report: true
           sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x -e
+          pwd
+          ls -all
+          tree
         
       - name: Upload firmware
         uses: actions/upload-artifact@v4
@@ -36,37 +44,7 @@ jobs:
           path: iot-playground.ino.bin
           name: iot-playground
           compression-level: 0
-          # if-no-files-found: error
-  
-  compile_vizard_sketch:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Compile vizard sketch on ESP32
-        uses: arduino/compile-sketches@v1
-        with:
-          # platforms: | 
-          #   - name: esp32:esp32
-          #     source-url: https://dl.espressif.com/dl/package_esp32_index.json
-          #     version: 1.0.6
-          # fqbn: esp32:esp32:m5stack-core-esp32
-          sketch-paths: |
-            - ./vizard/vizard.ino
-          libraries: |
-            - 
-          enable-deltas-report: true
-          enable-warnings-report: true
-          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
-        
-      - name: Upload firmware
-        uses: actions/upload-artifact@v4
-        with:
-          path: vizard/vizard.ino.bin
-          name: vizard
-          compression-level: 0
-          # if-no-files-found: error
+          if-no-files-found: error
 
   compile_one_button_sketch:
     runs-on: ubuntu-latest
@@ -95,7 +73,7 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          # arduino-cli core install esp32:esp32
+          
           arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
 
           arduino-cli core search m5stack
@@ -147,7 +125,6 @@ jobs:
     environment: github_release
     needs: 
       - compile_playground_sketch
-      - compile_vizard_sketch
       - compile_one_button_sketch
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
@@ -160,7 +137,7 @@ jobs:
         if [[ "${{ github.ref_type }}" == "tag" ]]; then
           version=${{ github.ref_name }}
         else
-          version="${GITHUB_SHA::7}"
+          version="b-${GITHUB_SHA::7}"
         fi
 
         echo "version=${version}" > $GITHUB_OUTPUT

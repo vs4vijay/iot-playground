@@ -1,0 +1,61 @@
+---
+name: Demo Compile Sketch with PlatformIO
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+    paths:
+      - demo_pio/**
+  pull_request:
+    branches:
+      - main
+  
+
+
+jobs:
+
+  compile_demo_sketch_platformio:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo_pio
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Build PlatformIO Project
+        run: pio run
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
+      # TODO: Validate
+        
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: demo.pio.bin
+          name: demo.pio

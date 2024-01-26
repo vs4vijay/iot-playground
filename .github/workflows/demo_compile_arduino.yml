@@ -1,5 +1,5 @@
 ---
-name: Demo Compile Sketch
+name: Demo Compile Sketch with Arduino
 
 on:
   push:
@@ -9,8 +9,6 @@ on:
       - "v*"
     paths:
       - demo/**
-      - demo_idf/**
-      - demo_pio/**
   pull_request:
     branches:
       - main
@@ -43,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: demo/demo.ino.bin
-          name: demo_og
+          name: demo.og
           compression-level: 0
   
   compile_demo_sketch:
