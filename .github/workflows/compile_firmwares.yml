@@ -124,7 +124,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: github_release
     needs: 
-      - compile_playground_sketch
       - compile_one_button_sketch
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
