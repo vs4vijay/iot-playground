@@ -76,6 +76,19 @@ jobs:
         with:
           submodules: true
 
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1
 
@@ -95,7 +108,7 @@ jobs:
           set -x
           pip install -U esptool
 
-      - name: Compile M5Cardputer Sketch
+      - name: Compile OneButton Sketch
         run: |
           arduino-cli compile --fqbn m5stack:esp32:m5stack_stickc_plus2 -e \
                               --build-property build.partitions=huge_app \
@@ -109,23 +122,67 @@ jobs:
         run: |
           set -x -e
           pwd
+          ls -all
           tree
       
-      - name: Create firmware
+      - name: Create OneButton firmware
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output OneButton.m5stack_stickc_plus2.bin \
-            0x0000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bootloader.bin \
+          esptool.py --chip esp32s3 merge_bin --output OneButton-${{ steps.version.outputs.version }}-M5StickCPlus2.bin \
+            0x1000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bootloader.bin \
             0x8000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.partitions.bin \
             0x10000 M5StickCPlus2/EXamples/OneButton-main/OneButton/build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bin
-
         
       - name: Upload OneButton firmware
         uses: actions/upload-artifact@v4
         with:
-          path: OneButton.m5stack_stickc_plus2.bin
-          name: OneButton
+          path: OneButton-${{ steps.version.outputs.version }}-M5StickCPlus2.bin
+          name: OneButton (M5StickCPlus2)
           compression-level: 0
           # if-no-files-found: error
+
+  create_release:
+    runs-on: ubuntu-latest
+    environment: github_release
+    needs: 
+      - compile_playground_sketch
+      - compile_vizard_sketch
+      - compile_one_button_sketch
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+    - id: version
+      name: Get Version
+      run: |
+        set -x
+
+        if [[ "${{ github.ref_type }}" == "tag" ]]; then
+          version=${{ github.ref_name }}
+        else
+          version="${GITHUB_SHA::7}"
+        fi
+
+        echo "version=${version}" > $GITHUB_OUTPUT
+
+    - uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+
+    - name: List all files
+      if: always()
+      run: |
+        set -x
+        pwd
+        ls -all
+        tree
+
+    - name: Create Release ${{ steps.version.outputs.version }}
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ steps.version.outputs.version }}
+        tag_name: ${{ steps.version.outputs.version }}
+        files: |
+          *.bin
+
 
