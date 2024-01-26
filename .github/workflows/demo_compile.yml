@@ -7,13 +7,14 @@ on:
       - main
     tags:
       - "v*"
-    # paths:
-    #   - 'demo_sketch/**'
+    paths:
+      - demo/**
+      - demo_idf/**
+      - demo_pio/**
   pull_request:
     branches:
       - main
   
-
 jobs:
   compile_demo_sketch_og:
     runs-on: ubuntu-latest
@@ -106,35 +107,3 @@ jobs:
         with:
           path: demo/demo.bin
           name: demo
-
-  create_release:
-    runs-on: ubuntu-latest
-    environment: release
-    needs: [compile_demo_sketch]
-
-    steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: demo
-        merge-multiple: true
-
-    - run: |
-        set -x -e
-        pwd
-        ls -all
-        tree
-    
-    # - uses: ncipollo/release-action@v1
-    #   with:
-    #     artifacts: "M5Nemo-M5Cardputer.bin"
-    #     name: "Test Release"
-    #     draft: true
-    #     generateReleaseNotes: true
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        name: test_release_1
-        files: |
-          demo.bin
-

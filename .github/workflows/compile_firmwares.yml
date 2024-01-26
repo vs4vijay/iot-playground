@@ -182,6 +182,7 @@ jobs:
       with:
         name: Release ${{ steps.version.outputs.version }}
         tag_name: ${{ steps.version.outputs.version }}
+        generate_release_notes: true
         files: |
           *.bin
 
