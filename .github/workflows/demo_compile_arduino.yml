@@ -108,4 +108,5 @@ jobs:
         with:
           path: demo/demo.bin
           name: demo
+          compression-level: 0
           if-no-files-found: error

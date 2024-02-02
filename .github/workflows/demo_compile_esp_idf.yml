@@ -8,40 +8,29 @@ on:
     tags:
       - "v*"
     paths:
-      - demo_pio/**
+      - demo_idf/**
   pull_request:
     branches:
       - main
     paths:
-      - demo_pio/**
+      - demo_idf/**
 
 jobs:
 
-  compile_demo_sketch_platformio:
+  compile_demo_idf:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: demo_pio
+        working-directory: demo_idf
 
     steps:
       - uses: actions/checkout@v4
       
-      - uses: actions/cache@v4
+      - name: Build using esp-idf
+        uses: espressif/esp-idf-ci-action@v1
         with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio/.cache
-          key: ${{ runner.os }}-pio
-      
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-      
-      - name: Install PlatformIO Core
-        run: pip install --upgrade platformio
-
-      - name: Build PlatformIO Project
-        run: pio run
+          esp_idf_version: v4.4.6
+          target: esp32s3
 
       - name: List all files
         if: always()
@@ -51,13 +40,11 @@ jobs:
           pwd
           ls -all
           tree
-
-      # TODO: Validate
         
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: .pio/build/esp32dev/firmware.bin
-          name: demo.pio
+          path: *.bin
+          name: demo.idf
           compression-level: 0
           if-no-files-found: error

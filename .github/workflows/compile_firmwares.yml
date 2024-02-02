@@ -163,7 +163,7 @@ jobs:
       - name: Upload M5Cardputer-UserDemo firmware
         uses: actions/upload-artifact@v4
         with:
-          path: M5Cardputer-UserDemo-${{ steps.version.outputs.version }}.bin
+          path: build/cardputer.bin
           name: M5Cardputer-UserDemo
           compression-level: 0
           if-no-files-found: error
