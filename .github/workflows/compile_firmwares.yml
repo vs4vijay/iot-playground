@@ -177,11 +177,16 @@ jobs:
           ls -all
           tree
 
-          esptool.py --chip esp32s3 merge_bin --output  @flash_args
+          esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo.bin @flash_args
 
           esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo/UserDemo1.bin @flash_args
 
-          esptool.py --chip esp32s3 merge_bin --output UserDemo.M5Cardputer.bin \
+          esptool.py --chip esp32s3 merge_bin --output ../UserDemo.M5Cardputer2.bin \
+                0x0 bootloader/bootloader.bin \
+                0x8000 partition_table/partition-table.bin \
+                0x10000 cardputer.bin 
+
+          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer3.bin \
                 0x0 bootloader/bootloader.bin \
                 0x8000 partition_table/partition-table.bin \
                 0x10000 cardputer.bin 
