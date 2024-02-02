@@ -28,6 +28,11 @@ jobs:
       
       - name: Build using esp-idf
         uses: espressif/esp-idf-ci-action@v1
+
+      - name: Merge Firmware Binary
+        run: |
+          . $HOME/esp/esp-idf/export.sh
+          esptool.py merge_bin -o final_firmware.bin --fill-flash-size 4MB <other_parameters>
         with:
           esp_idf_version: v4.4.6
           target: esp32s3
@@ -44,7 +49,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: *.bin
+          path: final_firmware.bin
           name: demo.idf
           compression-level: 0
           if-no-files-found: error
