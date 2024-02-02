@@ -171,11 +171,11 @@ jobs:
       - name: Create UserDemo.M5Cardputer firmware
         working-directory: M5Cardputer-UserDemo/build
         run: |
-          set -x
+          set -x +e
 
-          esptool.py --chip esp32 merge_bin -o UserDemo-M5Cardputer.bin @flash_args
+          esptool.py --chip esp32s3 merge_bin -o UserDemo-M5Cardputer.bin @flash_args
 
-          esptool.py --chip esp32 merge_bin -o M5Cardputer-UserDemo/UserDemo1.bin @flash_args
+          esptool.py --chip esp32s3 merge_bin -o M5Cardputer-UserDemo/UserDemo1.bin @flash_args
       
       - name: List all files
         if: always()
