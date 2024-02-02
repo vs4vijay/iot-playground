@@ -51,9 +51,6 @@ jobs:
 
   compile_one_button_sketch:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
 
     steps:
       - uses: actions/checkout@v4
@@ -93,6 +90,7 @@ jobs:
           pip install -U esptool
 
       - name: Compile OneButton Sketch
+        working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
           arduino-cli compile --fqbn m5stack:esp32:m5stack_stickc_plus2 -e \
                               --build-property build.partitions=huge_app \
@@ -103,6 +101,7 @@ jobs:
       - name: List all files
         if: always()
         continue-on-error: true
+        working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
           set -x -e
           pwd
@@ -110,6 +109,7 @@ jobs:
           tree
       
       - name: Create OneButton firmware
+        working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
           set -x
 
@@ -121,16 +121,13 @@ jobs:
       - name: Upload OneButton firmware
         uses: actions/upload-artifact@v4
         with:
-          path: OneButton-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
-          name: OneButton (M5StickCPlus2)
+          path: M5StickCPlus2/EXamples/OneButton-main/OneButton/OneButton-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
+          name: OneButton.M5StickCPlus2
           compression-level: 0
           if-no-files-found: error
 
   compile_m5cardputer_user_demo:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: M5Cardputer-UserDemo
 
     steps:
       - uses: actions/checkout@v4
@@ -155,6 +152,7 @@ jobs:
         with:
           esp_idf_version: v4.4.6
           target: esp32s3
+          path: M5Cardputer-UserDemo
       
       - name: List all files
         if: always()
@@ -168,8 +166,8 @@ jobs:
       - name: Upload M5Cardputer-UserDemo firmware
         uses: actions/upload-artifact@v4
         with:
-          path: build/cardputer.bin
-          name: M5Cardputer-UserDemo
+          path: M5Cardputer-UserDemo/build/cardputer.bin
+          name: UserDemo.M5Cardputer
           compression-level: 0
           if-no-files-found: error
 
