@@ -147,7 +147,7 @@ jobs:
       - name: Compile using esp-idf build
         uses: espressif/esp-idf-ci-action@v1
         with:
-          # esp_idf_version: v4.4
+          esp_idf_version: v4.4.6
           target: esp32s3
           path: "M5Cardputer-UserDemo"
       
@@ -185,7 +185,7 @@ jobs:
         if [[ "${{ github.ref_type }}" == "tag" ]]; then
           version=${{ github.ref_name }}
         else
-          version="b-${GITHUB_SHA::7}"
+          version="${GITHUB_SHA::7}"
         fi
 
         echo "version=${version}" > $GITHUB_OUTPUT
