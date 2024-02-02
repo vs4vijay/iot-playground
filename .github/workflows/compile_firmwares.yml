@@ -123,11 +123,57 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+  compile_m5cardputer_user_demo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+      
+      - name: Compile using esp-idf build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          # esp_idf_version: v4.4
+          # target: esp32s2
+          path: "M5Cardputer-UserDemo"
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x -e
+          pwd
+          ls -all
+          tree
+        
+      - name: Upload M5Cardputer-UserDemo firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: M5Cardputer-UserDemo-${{ steps.version.outputs.version }}.bin
+          name: M5Cardputer-UserDemo
+          compression-level: 0
+          if-no-files-found: error
+
   create_release:
     runs-on: ubuntu-latest
     environment: github_release
     needs: 
       - compile_one_button_sketch
+      - compile_m5cardputer_user_demo
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
