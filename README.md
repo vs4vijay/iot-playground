@@ -13,6 +13,14 @@ arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
 
 ```
 
+## Merge bootloader, partiotion table with app
+
+```bash
+
+esptool.py --chip esp32 merge_bin -o flash_image.bin @flash_args
+
+```
+
 ## Flash firmware
 
 - Install esptool.py - `pip install -U esptool`
@@ -22,3 +30,4 @@ arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
 esptool write_flash -z 0 name.bin
 
 ```
+

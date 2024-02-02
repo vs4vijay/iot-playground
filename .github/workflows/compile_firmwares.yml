@@ -173,7 +173,9 @@ jobs:
         run: |
           set -x
 
-          esptool.py --chip esp32 merge_bin -o UserDemo.M5Cardputer.bin @flash_args
+          esptool.py --chip esp32 merge_bin -o UserDemo-M5Cardputer.bin @flash_args
+
+          esptool.py --chip esp32 merge_bin -o M5Cardputer-UserDemo/UserDemo1.bin @flash_args
       
       - name: List all files
         if: always()
