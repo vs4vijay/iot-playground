@@ -113,7 +113,7 @@ jobs:
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output OneButton-${{ steps.version.outputs.version }}-M5StickCPlus2.bin \
+          esptool.py --chip esp32s3 merge_bin --output OneButton-${{ steps.version.outputs.version }}.M5StickCPlus2.bin \
             0x1000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bin
@@ -147,12 +147,33 @@ jobs:
 
           echo "version=${version}" > $GITHUB_OUTPUT
       
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+      
       - name: Compile using esp-idf build
         uses: espressif/esp-idf-ci-action@v1
         with:
           esp_idf_version: v4.4.6
           target: esp32s3
           path: M5Cardputer-UserDemo
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x -e
+          pwd
+          ls -all
+          tree
+      
+      - name: Create UserDemo.M5Cardputer firmware
+        working-directory: M5Cardputer-UserDemo/build
+        run: |
+          set -x
+
+          esptool.py --chip esp32 merge_bin -o UserDemo.M5Cardputer.bin @flash_args
       
       - name: List all files
         if: always()
