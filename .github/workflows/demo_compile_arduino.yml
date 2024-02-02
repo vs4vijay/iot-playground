@@ -34,7 +34,7 @@ jobs:
           sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
 
       - run: |
-          set -x -e
+          set -x +e
           pwd
           ls -all
           tree
@@ -97,7 +97,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          set -x -e
+          set -x +e
           pwd
           tree
 

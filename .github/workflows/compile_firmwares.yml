@@ -36,7 +36,7 @@ jobs:
   #       if: always()
   #       continue-on-error: true
   #       run: |
-  #         set -x -e
+  #         set -x +e
   #         pwd
   #         ls -all
   #         tree
@@ -103,7 +103,7 @@ jobs:
         continue-on-error: true
         working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
-          set -x -e
+          set -x +e
           pwd
           ls -all
           tree
@@ -163,7 +163,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          set -x -e
+          set -x +e
           pwd
           ls -all
           tree
@@ -173,15 +173,24 @@ jobs:
         run: |
           set -x +e
 
-          esptool.py --chip esp32s3 merge_bin -o UserDemo-M5Cardputer.bin @flash_args
+          pwd
+          ls -all
+          tree
 
-          esptool.py --chip esp32s3 merge_bin -o M5Cardputer-UserDemo/UserDemo1.bin @flash_args
+          esptool.py --chip esp32s3 merge_bin --output  @flash_args
+
+          esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo/UserDemo1.bin @flash_args
+
+          esptool.py --chip esp32s3 merge_bin --output UserDemo.M5Cardputer.bin \
+                0x0 bootloader/bootloader.bin \
+                0x8000 partition_table/partition-table.bin \
+                0x10000 cardputer.bin 
       
       - name: List all files
         if: always()
         continue-on-error: true
         run: |
-          set -x -e
+          set -x +e
           pwd
           ls -all
           tree
@@ -189,7 +198,7 @@ jobs:
       - name: Upload M5Cardputer-UserDemo firmware
         uses: actions/upload-artifact@v4
         with:
-          path: M5Cardputer-UserDemo/build/cardputer.bin
+          path: M5Cardputer-UserDemo/build/UserDemo.M5Cardputer.bin
           name: UserDemo.M5Cardputer
           compression-level: 0
           if-no-files-found: error
