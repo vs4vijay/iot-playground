@@ -152,7 +152,6 @@ jobs:
 
           echo "version=${version}" > $GITHUB_OUTPUT
 
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
@@ -164,6 +163,7 @@ jobs:
         run: pip install -U platformio
 
       - name: Compile using PlatformIO
+        working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
           pio run
@@ -171,6 +171,7 @@ jobs:
       - name: Move firmware binary
         if: always()
         continue-on-error: true
+        working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
           cp .pio/build/m5stick-c/firmware.bin UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
