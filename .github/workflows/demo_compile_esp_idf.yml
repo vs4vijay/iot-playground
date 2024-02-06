@@ -8,12 +8,12 @@ on:
     tags:
       - "v*"
     # paths:
-    #   - demo_idf/**
+    #   - demo_esp_idf/**
   pull_request:
     branches:
       - main
     # paths:
-    #   - demo_idf/**
+    #   - demo_esp_idf/**
 
 jobs:
 
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: demo_idf
+        working-directory: demo_esp_idf
 
     steps:
       - uses: actions/checkout@v4
