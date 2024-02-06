@@ -1,5 +1,5 @@
 ---
-name: Demo Compile with ESP IDF
+name: Compile Demo with ESP IDF
 
 on:
   workflow_dispatch:
@@ -58,7 +58,7 @@ jobs:
           ls -all $HOME
           
           cd build
-          esptool.py merge_bin -o Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
+          esptool.py --chip esp32s3 merge_bin -o Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
 
       - name: List all files
         if: always()
