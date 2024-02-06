@@ -49,7 +49,7 @@ jobs:
   #         compression-level: 0
   #         if-no-files-found: error
 
-  compile_one_button_sketch:
+  compile_one_button:
     runs-on: ubuntu-latest
 
     steps:
@@ -126,7 +126,7 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-  compile_m5cardputer_user_demo:
+  compile_user_demo_m5cardputer:
     runs-on: ubuntu-latest
 
     steps:
@@ -173,12 +173,12 @@ jobs:
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output ../../M5Cardputer-UserDemo.bin @flash_args
+          esptool.py --chip esp32s3 merge_bin --output UserDemo.M5Cardputer.bin @flash_args
 
-          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer.bin \
-                0x0 bootloader/bootloader.bin \
-                0x8000 partition_table/partition-table.bin \
-                0x10000 cardputer.bin 
+          # esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer.bin \
+          #       0x0 bootloader/bootloader.bin \
+          #       0x8000 partition_table/partition-table.bin \
+          #       0x10000 cardputer.bin 
       
       - name: List all files
         if: always()
@@ -201,8 +201,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: github_release
     needs: 
-      - compile_one_button_sketch
-      - compile_m5cardputer_user_demo
+      - compile_one_button
+      - compile_user_demo_m5cardputer
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
