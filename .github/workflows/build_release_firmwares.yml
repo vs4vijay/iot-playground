@@ -180,12 +180,12 @@ jobs:
           set -x
           pwd
           ls -all M5StickCPlus2-UserDemo/
-          tree M5StickCPlus2-UserDemo/
 
           pio run --help
-          ls -all ~/.pio
 
           cd M5StickCPlus2-UserDemo/
+          ls -all .pio
+          tree .pio
 
           cp .pio/build/m5stick-c/firmware.bin UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
       
