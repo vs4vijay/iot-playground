@@ -18,7 +18,7 @@ on:
 
 jobs:
 
-  compile_demo_idf:
+  compile_demo_esp_idf:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,6 +26,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+      
+      - name: Build using esp-idf
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v4.4.6
+          target: esp32s3
+          path: demo_esp_idf
 
       - name: List all files
         if: always()
@@ -35,19 +47,18 @@ jobs:
           pwd
           ls -all
           tree
-      
-      - name: Build using esp-idf
-        uses: espressif/esp-idf-ci-action@v1
-        with:
-          esp_idf_version: v4.4.6
-          target: esp32s3
-          path: demo_esp_idf
 
       - name: Merge Firmware Binary
         run: |
-          . $HOME/esp/esp-idf/export.sh
+          set -x
+          # . $HOME/esp/esp-idf/export.sh
+          # demo_esp_idf/build/demo_esp_idf.bin
+          pwd
+          ls -all
+          ls -all $HOME
+          
           cd build
-          esptool.py merge_bin -o Demo.IDF.bin --fill-flash-size 4MB @flash_args
+          esptool.py merge_bin -o Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
 
       - name: List all files
         if: always()
@@ -61,7 +72,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: build/Demo.IDF.bin
-          name: Demo.IDF
+          path: build/Demo.ESP_IDF.bin
+          name: Demo.ESP_IDF
           compression-level: 0
           if-no-files-found: error
