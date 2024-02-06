@@ -8,13 +8,15 @@ on:
       - main
     tags:
       - "v*"
-    # paths:
-    #   - demo_esp_idf/**
+    paths:
+      - demo_esp_idf/**
+      - .github/workflows/demo_compile_esp_idf.yml
   pull_request:
     branches:
       - main
-    # paths:
-    #   - demo_esp_idf/**
+    paths:
+      - demo_esp_idf/**
+      - .github/workflows/demo_compile_esp_idf.yml
 
 jobs:
 
@@ -73,7 +75,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: Demo.ESP_IDF.bin
+          path: demo_esp_idf/Demo.ESP_IDF.bin
           name: Demo.ESP_IDF
           compression-level: 0
           if-no-files-found: error
