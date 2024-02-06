@@ -103,7 +103,7 @@ jobs:
         continue-on-error: true
         working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
-          set -x +e
+          set -x
           pwd
           ls -all
           tree
@@ -163,7 +163,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          set -x +e
+          set -x
           pwd
           ls -all
           tree
@@ -171,22 +171,11 @@ jobs:
       - name: Create UserDemo.M5Cardputer firmware
         working-directory: M5Cardputer-UserDemo/build
         run: |
-          set -x +e
+          set -x
 
-          pwd
-          ls -all
-          tree
+          esptool.py --chip esp32s3 merge_bin --output ../../M5Cardputer-UserDemo.bin @flash_args
 
-          esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo.bin @flash_args
-
-          esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo/UserDemo1.bin @flash_args
-
-          esptool.py --chip esp32s3 merge_bin --output ../UserDemo.M5Cardputer2.bin \
-                0x0 bootloader/bootloader.bin \
-                0x8000 partition_table/partition-table.bin \
-                0x10000 cardputer.bin 
-
-          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer3.bin \
+          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer.bin \
                 0x0 bootloader/bootloader.bin \
                 0x8000 partition_table/partition-table.bin \
                 0x10000 cardputer.bin 
@@ -195,7 +184,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          set -x +e
+          set -x
           pwd
           ls -all
           tree
@@ -236,6 +225,7 @@ jobs:
 
     - name: List all files
       if: always()
+      continue-on-error: true
       run: |
         set -x
         pwd
