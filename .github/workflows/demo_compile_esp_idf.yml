@@ -1,5 +1,5 @@
 ---
-name: Demo Compile Sketch with PlatformIO
+name: Demo Compile with ESP IDF
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
       - main
     tags:
       - "v*"
-    paths:
-      - demo_idf/**
+    # paths:
+    #   - demo_idf/**
   pull_request:
     branches:
       - main
-    paths:
-      - demo_idf/**
+    # paths:
+    #   - demo_idf/**
 
 jobs:
 
@@ -36,7 +36,7 @@ jobs:
         run: |
           . $HOME/esp/esp-idf/export.sh
           cd build
-          esptool.py merge_bin -o final_firmware.bin --fill-flash-size 4MB @flash_args
+          esptool.py merge_bin -o Demo.IDF.bin --fill-flash-size 4MB @flash_args
 
       - name: List all files
         if: always()
@@ -50,7 +50,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: final_firmware.bin
-          name: demo.idf
+          path: Demo.IDF.bin
+          name: Demo.IDF
           compression-level: 0
           if-no-files-found: error
