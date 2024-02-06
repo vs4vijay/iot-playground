@@ -1,5 +1,5 @@
 ---
-name: Compile Firmwares
+name: Build and Release Firmwares
 
 on:
   workflow_dispatch:
@@ -181,14 +181,20 @@ jobs:
           pwd
           ls -all M5StickCPlus2-UserDemo/
           tree M5StickCPlus2-UserDemo/
-          ls -all ~/.pio/build
-      
-      - name: Create UserDemo.M5StickCPlus2 firmware
-        working-directory: M5StickCPlus2-UserDemo/build
-        run: |
-          set -x
 
-          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin @flash_args
+          pio run --help
+          ls -all ~/.pio
+
+          cd M5StickCPlus2-UserDemo/
+
+          cp .pio/build/m5stick-c/firmware.bin UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
+      
+      # - name: Create UserDemo.M5StickCPlus2 firmware
+      #   working-directory: M5StickCPlus2-UserDemo/build
+      #   run: |
+      #     set -x
+
+      #     esptool.py --chip esp32s3 merge_bin --output ../../UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin @flash_args
       
       - name: List all files
         if: always()
