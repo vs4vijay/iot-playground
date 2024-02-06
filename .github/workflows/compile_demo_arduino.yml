@@ -1,5 +1,5 @@
 ---
-name: Demo Compile Sketch with Arduino
+name: Compile Demo with Arduino
 
 on:
   workflow_dispatch:

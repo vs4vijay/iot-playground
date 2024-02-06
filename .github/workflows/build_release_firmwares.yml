@@ -163,13 +163,14 @@ jobs:
       - name: Install PlatformIO core
         run: pip install -U platformio
 
-      - name: Build PlatformIO project
+      - name: Compile using PlatformIO
         run: |
           set -x
           pwd
           ls -all
 
           cd M5StickCPlus2-UserDemo/
+          ls -all
           pio run
       
       - name: List all files
@@ -178,8 +179,9 @@ jobs:
         run: |
           set -x
           pwd
-          ls -all
-          tree
+          ls -all M5StickCPlus2-UserDemo/
+          tree M5StickCPlus2-UserDemo/
+          ls -all ~/.pio/build
       
       - name: Create UserDemo.M5StickCPlus2 firmware
         working-directory: M5StickCPlus2-UserDemo/build

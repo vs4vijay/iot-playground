@@ -1,5 +1,5 @@
 ---
-name: Demo Compile Sketch with PlatformIO
+name: Compile Demo with PlatformIO
 
 on:
   workflow_dispatch:
