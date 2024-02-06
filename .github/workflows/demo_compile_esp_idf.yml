@@ -41,6 +41,7 @@ jobs:
         with:
           esp_idf_version: v4.4.6
           target: esp32s3
+          path: demo_esp_idf
 
       - name: Merge Firmware Binary
         run: |
@@ -60,7 +61,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: Demo.IDF.bin
+          path: build/Demo.IDF.bin
           name: Demo.IDF
           compression-level: 0
           if-no-files-found: error
