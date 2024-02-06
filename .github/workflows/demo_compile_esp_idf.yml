@@ -58,7 +58,8 @@ jobs:
           ls -all $HOME
           
           cd build
-          esptool.py --chip esp32s3 merge_bin -o Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
+          # TODO: Having issue when -o in same directory for ESP IDF based directory
+          esptool.py --chip esp32s3 merge_bin -o ../Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
 
       - name: List all files
         if: always()
@@ -72,7 +73,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: build/Demo.ESP_IDF.bin
+          path: Demo.ESP_IDF.bin
           name: Demo.ESP_IDF
           compression-level: 0
           if-no-files-found: error
