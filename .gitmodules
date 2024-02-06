@@ -4,9 +4,9 @@
 [submodule "M5StickCPlus2-UserDemo"]
 	path = M5StickCPlus2-UserDemo
 	url = https://github.com/m5stack/M5StickCPlus2-UserDemo
-[submodule "M5CardRemote"]
-	path = M5CardRemote
-	url = https://github.com/VolosR/M5CardRemote/
 [submodule "M5Cardputer-UserDemo"]
 	path = M5Cardputer-UserDemo
 	url = https://github.com/m5stack/M5Cardputer-UserDemo.git
+[submodule "M5CardRemote"]
+	path = M5CardRemote
+	url = https://github.com/VolosR/M5CardRemote/

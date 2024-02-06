@@ -2,6 +2,7 @@
 name: Demo Compile with ESP IDF
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
