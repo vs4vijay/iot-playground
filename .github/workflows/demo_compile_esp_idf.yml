@@ -7,7 +7,7 @@ on:
     branches:
       - main
     tags:
-      - "v*"
+      - "*"
     paths:
       - demo_esp_idf/**
       - .github/workflows/demo_compile_esp_idf.yml
@@ -50,7 +50,7 @@ jobs:
           ls -all
           tree
 
-      - name: Merge Firmware Binary
+      - name: Merge firmware binary
         run: |
           set -x
           # . $HOME/esp/esp-idf/export.sh

@@ -7,7 +7,7 @@ on:
     branches:
       - main
     tags:
-      - "v*"
+      - "*"
   pull_request:
     branches:
       - main
@@ -131,6 +131,80 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+  compile_user_demo_m5stickc_plus2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      
+      - name: Install esptool
+        run: pip install -U esptool
+    
+      - name: Install PlatformIO core
+        run: pip install -U platformio
+
+      - name: Build PlatformIO project
+        run: |
+          set -x
+          pwd
+          ls -all
+
+          cd M5StickCPlus2-UserDemo/
+          pio run
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+      
+      - name: Create UserDemo.M5StickCPlus2 firmware
+        working-directory: M5StickCPlus2-UserDemo/build
+        run: |
+          set -x
+
+          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin @flash_args
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+        
+      - name: Upload UserDemo.M5StickCPlus2 firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
+          name: UserDemo.M5StickCPlus2
+          compression-level: 0
+          if-no-files-found: error
+
   compile_user_demo_m5cardputer:
     runs-on: ubuntu-latest
 
@@ -194,7 +268,7 @@ jobs:
           ls -all
           tree
         
-      - name: Upload M5Cardputer-UserDemo firmware
+      - name: Upload UserDemo.M5Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
           path: UserDemo-${{ steps.version.outputs.version }}.M5Cardputer.bin

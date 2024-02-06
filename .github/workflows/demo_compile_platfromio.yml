@@ -10,11 +10,13 @@ on:
       - "v*"
     paths:
       - demo_pio/**
+      - .github/workflows/demo_compile_platfromio.yml
   pull_request:
     branches:
       - main
     paths:
       - demo_pio/**
+      - .github/workflows/demo_compile_platfromio.yml
 
 jobs:
 
@@ -38,10 +40,10 @@ jobs:
         with:
           python-version: '3.9'
       
-      - name: Install PlatformIO Core
+      - name: Install PlatformIO core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO Project
+      - name: Build PlatformIO project
         run: pio run
 
       - name: List all files

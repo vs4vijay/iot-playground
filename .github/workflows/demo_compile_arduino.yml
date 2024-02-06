@@ -7,14 +7,16 @@ on:
     branches:
       - main
     tags:
-      - "v*"
+      - "*"
     paths:
       - demo/**
+      - .github/workflows/demo_compile_arduino.yml
   pull_request:
     branches:
       - main
     paths:
       - demo/**
+      - .github/workflows/demo_compile_arduino.yml
   
 jobs:
   compile_demo_sketch_og:
