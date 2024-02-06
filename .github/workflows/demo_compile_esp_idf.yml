@@ -28,14 +28,15 @@ jobs:
       
       - name: Build using esp-idf
         uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v4.4.6
+          target: esp32s3
 
       - name: Merge Firmware Binary
         run: |
           . $HOME/esp/esp-idf/export.sh
-          esptool.py merge_bin -o final_firmware.bin --fill-flash-size 4MB <other_parameters>
-        with:
-          esp_idf_version: v4.4.6
-          target: esp32s3
+          cd build
+          esptool.py merge_bin -o final_firmware.bin --fill-flash-size 4MB @flash_args
 
       - name: List all files
         if: always()
