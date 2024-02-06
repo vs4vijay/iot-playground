@@ -25,6 +25,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
       
       - name: Build using esp-idf
         uses: espressif/esp-idf-ci-action@v1

@@ -56,6 +56,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
 
       - id: version
         name: Get Version
@@ -132,7 +136,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: recursive
 
       - id: version
         name: Get Version
@@ -203,7 +207,7 @@ jobs:
     needs: 
       - compile_one_button
       - compile_user_demo_m5cardputer
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
     - id: version
