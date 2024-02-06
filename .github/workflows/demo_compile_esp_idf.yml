@@ -1,36 +1,67 @@
 ---
-name: Demo Compile Sketch with PlatformIO
+name: Compile Demo with ESP IDF
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     tags:
       - "v*"
     paths:
-      - demo_idf/**
+      - demo_esp_idf/**
+      - .github/workflows/demo_compile_esp_idf.yml
   pull_request:
     branches:
       - main
     paths:
-      - demo_idf/**
+      - demo_esp_idf/**
+      - .github/workflows/demo_compile_esp_idf.yml
 
 jobs:
 
-  compile_demo_idf:
+  compile_demo_esp_idf:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: demo_idf
+        working-directory: demo_esp_idf
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
       
       - name: Build using esp-idf
         uses: espressif/esp-idf-ci-action@v1
         with:
           esp_idf_version: v4.4.6
           target: esp32s3
+          path: demo_esp_idf
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
+      - name: Merge Firmware Binary
+        run: |
+          set -x
+          # . $HOME/esp/esp-idf/export.sh
+          # demo_esp_idf/build/demo_esp_idf.bin
+          pwd
+          ls -all
+          ls -all $HOME
+          
+          cd build
+          # TODO: Having issue when -o in same directory for ESP IDF based directory
+          esptool.py --chip esp32s3 merge_bin -o ../Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
 
       - name: List all files
         if: always()
@@ -44,7 +75,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: *.bin
-          name: demo.idf
+          path: demo_esp_idf/Demo.ESP_IDF.bin
+          name: Demo.ESP_IDF
           compression-level: 0
           if-no-files-found: error

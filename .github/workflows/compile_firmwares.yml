@@ -2,6 +2,7 @@
 name: Compile Firmwares
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -49,13 +50,17 @@ jobs:
   #         compression-level: 0
   #         if-no-files-found: error
 
-  compile_one_button_sketch:
+  compile_one_button:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
 
       - id: version
         name: Get Version
@@ -103,7 +108,7 @@ jobs:
         continue-on-error: true
         working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
-          set -x +e
+          set -x
           pwd
           ls -all
           tree
@@ -126,13 +131,13 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-  compile_m5cardputer_user_demo:
+  compile_user_demo_m5cardputer:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: recursive
 
       - id: version
         name: Get Version
@@ -163,7 +168,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          set -x +e
+          set -x
           pwd
           ls -all
           tree
@@ -171,31 +176,20 @@ jobs:
       - name: Create UserDemo.M5Cardputer firmware
         working-directory: M5Cardputer-UserDemo/build
         run: |
-          set -x +e
+          set -x
 
-          pwd
-          ls -all
-          tree
+          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo-${{ steps.version.outputs.version }}.M5Cardputer.bin @flash_args
 
-          esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo.bin @flash_args
-
-          esptool.py --chip esp32s3 merge_bin --output M5Cardputer-UserDemo/UserDemo1.bin @flash_args
-
-          esptool.py --chip esp32s3 merge_bin --output ../UserDemo.M5Cardputer2.bin \
-                0x0 bootloader/bootloader.bin \
-                0x8000 partition_table/partition-table.bin \
-                0x10000 cardputer.bin 
-
-          esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer3.bin \
-                0x0 bootloader/bootloader.bin \
-                0x8000 partition_table/partition-table.bin \
-                0x10000 cardputer.bin 
+          # esptool.py --chip esp32s3 merge_bin --output ../../UserDemo.M5Cardputer.bin \
+          #       0x0 bootloader/bootloader.bin \
+          #       0x8000 partition_table/partition-table.bin \
+          #       0x10000 cardputer.bin
       
       - name: List all files
         if: always()
         continue-on-error: true
         run: |
-          set -x +e
+          set -x
           pwd
           ls -all
           tree
@@ -203,7 +197,7 @@ jobs:
       - name: Upload M5Cardputer-UserDemo firmware
         uses: actions/upload-artifact@v4
         with:
-          path: M5Cardputer-UserDemo/build/UserDemo.M5Cardputer.bin
+          path: UserDemo-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: UserDemo.M5Cardputer
           compression-level: 0
           if-no-files-found: error
@@ -212,9 +206,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: github_release
     needs: 
-      - compile_one_button_sketch
-      - compile_m5cardputer_user_demo
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - compile_one_button
+      - compile_user_demo_m5cardputer
+    # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
     - id: version
@@ -236,6 +230,7 @@ jobs:
 
     - name: List all files
       if: always()
+      continue-on-error: true
       run: |
         set -x
         pwd
