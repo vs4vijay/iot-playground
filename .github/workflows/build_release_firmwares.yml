@@ -332,9 +332,9 @@ jobs:
           set -x
 
           esptool.py --chip esp32s3 merge_bin --output M5CardRemote-${{ steps.version.outputs.version }}.M5Cardputer.bin \
-            0x1000 build/m5stack.esp32.m5stack_stickc_plus2/M5CardRemote.ino.bootloader.bin \
-            0x8000 build/m5stack.esp32.m5stack_stickc_plus2/M5CardRemote.ino.partitions.bin \
-            0x10000 build/m5stack.esp32.m5stack_stickc_plus2/M5CardRemote.ino.bin
+            0x1000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bin
         
       - name: Upload M5CardRemote firmware
         uses: actions/upload-artifact@v4
