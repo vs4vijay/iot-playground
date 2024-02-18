@@ -343,6 +343,86 @@ jobs:
           name: M5CardRemote.M5Cardputer
           compression-level: 0
           if-no-files-found: error
+
+  compile_resistor_m5cardputer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Install platform
+        run: |
+          set -x
+          
+          arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
+
+          arduino-cli core search m5stack
+          arduino-cli board listall
+
+          arduino-cli lib install M5Cardputer --log-level warn --verbose
+          
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+
+      - name: Compile Resistor Sketch
+        working-directory: Cardputer/Resistor
+        run: |
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              ./Resistor.ino
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: Cardputer/Resistor
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+      
+      - name: Create Resistor firmware
+        working-directory: Cardputer/Resistor
+        run: |
+          set -x
+
+          esptool.py --chip esp32s3 merge_bin --output Resistor-${{ steps.version.outputs.version }}.M5Cardputer.bin \
+            0x1000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bin
+        
+      - name: Upload Resistor firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: Cardputer/Resistor/Resistor-${{ steps.version.outputs.version }}.M5Cardputer.bin
+          name: Resistor.M5Cardputer
+          compression-level: 0
+          if-no-files-found: error
   
   create_release:
     runs-on: ubuntu-latest
