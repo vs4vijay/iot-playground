@@ -264,7 +264,7 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-  compile_m5cardputer_remote:
+  compile_m5card_remote_m5cardputer:
     runs-on: ubuntu-latest
 
     steps:
@@ -348,9 +348,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: github_release
     needs: 
-      - compile_user_demo_m5cardputer
       - compile_one_button
       - compile_user_demo_m5stickc_plus2
+      - compile_user_demo_m5cardputer
+      - compile_m5card_remote_m5cardputer
     # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
