@@ -50,7 +50,7 @@ jobs:
   #         compression-level: 0
   #         if-no-files-found: error
 
-  compile_one_button:
+  compile_one_button_m5stickc_plus2:
     runs-on: ubuntu-latest
 
     steps:
@@ -332,7 +332,7 @@ jobs:
           set -x
 
           esptool.py --chip esp32s3 merge_bin --output M5CardRemote-${{ steps.version.outputs.version }}.M5Cardputer.bin \
-            0x1000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bootloader.bin \
+            0x0000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bin
         
@@ -412,7 +412,7 @@ jobs:
           set -x
 
           esptool.py --chip esp32s3 merge_bin --output Resistor-${{ steps.version.outputs.version }}.M5Cardputer.bin \
-            0x1000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bootloader.bin \
+            0x0000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bin
         
@@ -427,11 +427,12 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     environment: github_release
-    needs: 
-      - compile_one_button
-      - compile_user_demo_m5stickc_plus2
-      - compile_user_demo_m5cardputer
-      - compile_m5card_remote_m5cardputer
+    # needs: 
+      # - compile_one_button_m5stickc_plus2
+      # - compile_user_demo_m5stickc_plus2
+      # - compile_user_demo_m5cardputer
+      # - compile_m5card_remote_m5cardputer
+      # - compile_resistor_m5cardputer
     # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
