@@ -10,3 +10,6 @@
 [submodule "M5CardRemote"]
 	path = M5CardRemote
 	url = https://github.com/VolosR/M5CardRemote/
+[submodule "Cardputer"]
+	path = Cardputer
+	url = git@github.com:VolosR/Cardputer.git
