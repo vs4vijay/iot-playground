@@ -424,9 +424,85 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+  compile_m5launcher_m5cardputer:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: M5Stick-Launcher/Launcher
 
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
 
+      - id: version
+        name: Get Version
+        run: |
+          set -x
 
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Install platform
+        run: |
+          set -x
+          
+          arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
+
+          arduino-cli core search m5stack
+          arduino-cli board listall
+
+          arduino-cli lib install M5Cardputer M5Stack-SD-Updater M5Unified SdFat --log-level warn --verbose
+          
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+
+      - name: Compile M5Launcher Sketch
+        run: |
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              ./gb_cardputer.ino
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+      
+      - name: Create M5Launcher firmware
+        run: |
+          set -x
+
+          esptool.py --chip esp32s3 merge_bin --output M5Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin \
+            0x0000 build/m5stack.esp32.m5stack_cardputer/Launcher.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/Launcher.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/Launcher.ino.bin
+        
+      - name: Upload M5Launcher firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: M5Stick-Launcher/Launcher/M5Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
+          name: M5Launcher.M5Cardputer
+          compression-level: 0
+          if-no-files-found: error
 
   compile_gb_m5cardputer:
     runs-on: ubuntu-latest
@@ -495,7 +571,7 @@ jobs:
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output gb_cardputer-${{ steps.version.outputs.version }}.M5Cardputer.bin \
+          esptool.py --chip esp32s3 merge_bin --output GameBoy-${{ steps.version.outputs.version }}.M5Cardputer.bin \
             0x0000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.bin
@@ -503,7 +579,7 @@ jobs:
       - name: Upload GameBoy Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
-          path: gb_cardputer/gb_cardputer-${{ steps.version.outputs.version }}.M5Cardputer.bin
+          path: gb_cardputer/GameBoy-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: GameBoy.M5Cardputer
           compression-level: 0
           if-no-files-found: error
@@ -545,7 +621,7 @@ jobs:
           arduino-cli core search m5stack
           arduino-cli board listall
 
-          arduino-cli lib install M5StickCPlus2 IRremoteESP8266 TFT_eSPI --log-level warn --verbose
+          arduino-cli lib install M5StickCPlus2 IRremoteESP8266 TFT_eSPI ESP32Time --log-level warn --verbose
           
       - name: Install esptool
         run: |
