@@ -536,7 +536,7 @@ jobs:
         run: |
           set -x
           
-          arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
+          arduino-cli core install m5stack:esp32 --additional-urls "file:///package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
@@ -659,7 +659,7 @@ jobs:
       - name: Upload Evil Clock firmware
         uses: actions/upload-artifact@v4
         with:
-          path: evilClock/evilClock/Resistor-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
+          path: evilClock/evilClock/evilClock-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
           name: EvilClock.M5StickCPlus2
           compression-level: 0
           if-no-files-found: error
