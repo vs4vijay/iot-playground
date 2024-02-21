@@ -478,7 +478,7 @@ jobs:
           arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
-                              ./Resistor.ino
+                              ./gb_cardputer.ino
       
       - name: List all files
         if: always()
@@ -545,7 +545,7 @@ jobs:
           arduino-cli core search m5stack
           arduino-cli board listall
 
-          arduino-cli lib install M5StickCPlus2 --log-level warn --verbose
+          arduino-cli lib install M5StickCPlus2 IRremoteESP8266 --log-level warn --verbose
           
       - name: Install esptool
         run: |
