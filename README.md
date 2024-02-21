@@ -31,3 +31,10 @@ esptool write_flash -z 0 name.bin
 
 ```
 
+---
+
+## Credits and Thanks
+
+- https://github.com/VolosR
+- https://github.com/m5stack
+- https://github.com/matthew-5pl
