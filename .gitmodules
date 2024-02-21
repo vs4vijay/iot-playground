@@ -13,3 +13,9 @@
 [submodule "Cardputer"]
 	path = Cardputer
 	url = git@github.com:VolosR/Cardputer.git
+[submodule "gb_cardputer"]
+	path = gb_cardputer
+	url = git@github.com:matthew-5pl/gb_cardputer.git
+[submodule "evilClock"]
+	path = evilClock
+	url = git@github.com:VolosR/evilClock.git
