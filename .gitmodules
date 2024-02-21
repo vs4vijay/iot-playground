@@ -19,3 +19,6 @@
 [submodule "evilClock"]
 	path = evilClock
 	url = git@github.com:VolosR/evilClock.git
+[submodule "M5Stick-Launcher"]
+	path = M5Stick-Launcher
+	url = https://github.com/bmorcelli/M5Stick-Launcher
