@@ -810,7 +810,7 @@ jobs:
           tree
 
       - name: Create Release ${{ steps.version.outputs.version }}
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ steps.version.outputs.version }}
           tag_name: ${{ steps.version.outputs.version }}
