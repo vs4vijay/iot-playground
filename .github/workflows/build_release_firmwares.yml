@@ -663,7 +663,176 @@ jobs:
           name: EvilClock.M5StickCPlus2
           compression-level: 0
           if-no-files-found: error
+
+  compile_evil_clock_m5stickc_plus2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Install platform
+        run: |
+          set -x
+          
+          arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
+
+          arduino-cli core search m5stack
+          arduino-cli board listall
+
+          arduino-cli lib install M5StickCPlus2 IRremoteESP8266 TFT_eSPI ESP32Time --log-level warn --verbose
+          
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+
+      - name: Compile Evil Clock Sketch
+        working-directory: evilClock/evilClock
+        run: |
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_stickc_plus2 -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              ./evilClock.ino
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: evilClock/evilClock
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+      
+      - name: Create Evil Clock firmware
+        working-directory: evilClock/evilClock
+        run: |
+          set -x
+
+          esptool.py --chip esp32s3 merge_bin --output EvilClock-${{ steps.version.outputs.version }}.M5StickCPlus2.bin \
+            0x1000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.bin
+        
+      - name: Upload Evil Clock firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: evilClock/evilClock/EvilClock-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
+          name: EvilClock.M5StickCPlus2
+          compression-level: 0
+          if-no-files-found: error
   
+
+
+
+
+   
+
+  compile_evil_cardputer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Install platform
+        run: |
+          set -x
+          
+          arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
+
+          arduino-cli core search m5stack
+          arduino-cli board listall
+
+          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus adafruit_neopixel --log-level warn --verbose
+          
+      - name: Install esptool
+        run: |
+          set -x
+          pip install -U esptool
+
+      - name: Compile Evil Cardputer Sketch
+        working-directory: Evil-M5Core2
+        run: |
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer  -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              ./Evil-Cardputer-v1-2-2.ino
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: Evil-M5Core2
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+      
+      - name: Create Evil Cardputer firmware
+        working-directory: Evil-M5Core2
+        run: |
+          set -x
+
+          esptool.py --chip esp32s3 merge_bin --output Evil-Cardputer-${{ steps.version.outputs.version }}.bin \
+            0x1000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bin
+        
+      - name: Upload Evil Cardputer firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: Evil-M5Core2/Evil-Cardputer-${{ steps.version.outputs.version }}.bin
+          name: Evil-Cardputer
+          compression-level: 0
+          if-no-files-found: error
+
+
+
+
   create_release:
     runs-on: ubuntu-latest
     environment: github_release
