@@ -731,7 +731,8 @@ jobs:
           arduino-cli core search m5stack
           arduino-cli board listall
 
-          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus "Adafruit NeoPixel" --log-level warn --verbose
+          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus \
+                                  "Adafruit NeoPixel" M5Stack_Avatar --log-level warn --verbose
 
       - name: Install esptool
         run: |
@@ -741,7 +742,13 @@ jobs:
       - name: Compile Evil Cardputer Sketch
         working-directory: Evil-M5Core2
         run: |
-          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e --build-property build.partitions=huge_app --build-property upload.maximum_size=3145728 ./Evil-Cardputer-v1-2-2.ino
+          # Renaming as arduino doesn't compile when filename is diff then directory name
+          mv EEvil-Cardputer-v1-2-2.ino Evil-M5Core2.ino
+
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              ./Evil-M5Core2.ino
 
       - name: List all files
         if: always()
