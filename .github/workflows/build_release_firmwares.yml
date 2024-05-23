@@ -139,6 +139,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+
       - id: version
         name: Get Version
         run: |
@@ -165,7 +169,7 @@ jobs:
       - name: List all files
         if: always()
         continue-on-error: true
-        working-directory: evilClock/evilClock
+        working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
           pwd
@@ -469,7 +473,7 @@ jobs:
       - name: List all files
         if: always()
         continue-on-error: true
-        working-directory: evilClock/evilClock
+        working-directory: M5Stick-Launcher
         run: |
           set -x
           pwd
