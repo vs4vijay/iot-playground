@@ -28,11 +28,11 @@ jobs:
   #         sketch-paths: |
   #           - ./iot-playground.ino
   #         libraries: |
-  #           - 
+  #           -
   #         enable-deltas-report: true
   #         enable-warnings-report: true
   #         sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
-      
+
   #     - name: List all files
   #       if: always()
   #       continue-on-error: true
@@ -41,7 +41,7 @@ jobs:
   #         pwd
   #         ls -all
   #         tree
-        
+
   #     - name: Upload firmware
   #       uses: actions/upload-artifact@v4
   #       with:
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -81,14 +81,14 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          
+
           arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
 
           arduino-cli lib install M5StickCPlus2 --log-level warn --verbose
-          
+
       - name: Install esptool
         run: |
           set -x
@@ -102,7 +102,7 @@ jobs:
                               --build-property upload.maximum_size=3145728 \
                               --libraries M5StickCPlus2 \
                               ./OneButton.ino
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -112,7 +112,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create OneButton firmware
         working-directory: M5StickCPlus2/EXamples/OneButton-main/OneButton
         run: |
@@ -122,7 +122,7 @@ jobs:
             0x1000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bin
-        
+
       - name: Upload OneButton firmware
         uses: actions/upload-artifact@v4
         with:
@@ -154,13 +154,23 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-      
+          python-version: "3.9"
+
       - name: Install esptool
         run: pip install -U esptool
-    
+
       - name: Install PlatformIO core
         run: pip install -U platformio
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: evilClock/evilClock
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
 
       - name: Compile using PlatformIO
         working-directory: M5StickCPlus2-UserDemo
@@ -169,10 +179,11 @@ jobs:
 
           pio pkg update --library m5stack/M5GFX
 
+          cat platformio.ini
+
           pio run
-      
+
       - name: Move firmware binary
-        if: always()
         continue-on-error: true
         working-directory: M5StickCPlus2-UserDemo
         run: |
@@ -187,7 +198,7 @@ jobs:
           pwd
           ls -all
           tree
-        
+
       - name: Upload UserDemo.M5StickCPlus2 firmware
         uses: actions/upload-artifact@v4
         with:
@@ -216,19 +227,19 @@ jobs:
           fi
 
           echo "version=${version}" > $GITHUB_OUTPUT
-      
+
       - name: Install esptool
         run: |
           set -x
           pip install -U esptool
-      
+
       - name: Compile using esp-idf build
         uses: espressif/esp-idf-ci-action@v1
         with:
           esp_idf_version: v4.4.6
           target: esp32s3
           path: M5Cardputer-UserDemo
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -237,7 +248,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create UserDemo.M5Cardputer firmware
         working-directory: M5Cardputer-UserDemo/build
         run: |
@@ -249,7 +260,7 @@ jobs:
           #       0x0 bootloader/bootloader.bin \
           #       0x8000 partition_table/partition-table.bin \
           #       0x10000 cardputer.bin
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -258,7 +269,7 @@ jobs:
           pwd
           ls -all
           tree
-        
+
       - name: Upload UserDemo.M5Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
@@ -274,7 +285,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -298,14 +309,14 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          
+
           arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
 
           arduino-cli lib install M5Cardputer IRremote --log-level warn --verbose
-          
+
       - name: Install esptool
         run: |
           set -x
@@ -318,7 +329,7 @@ jobs:
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               ./M5CardRemote.ino
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -328,7 +339,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create M5CardRemote firmware
         working-directory: M5CardRemote/M5CardRemote
         run: |
@@ -338,7 +349,7 @@ jobs:
             0x0000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bin
-        
+
       - name: Upload M5CardRemote firmware
         uses: actions/upload-artifact@v4
         with:
@@ -354,7 +365,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -378,14 +389,14 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          
+
           arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
 
           arduino-cli lib install M5Cardputer --log-level warn --verbose
-          
+
       - name: Install esptool
         run: |
           set -x
@@ -398,7 +409,7 @@ jobs:
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               ./Resistor.ino
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -408,7 +419,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create Resistor firmware
         working-directory: Cardputer/Resistor
         run: |
@@ -418,7 +429,7 @@ jobs:
             0x0000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bin
-        
+
       - name: Upload Resistor firmware
         uses: actions/upload-artifact@v4
         with:
@@ -434,7 +445,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -454,7 +465,7 @@ jobs:
 
       - name: Install PlatformIO core
         run: pip install -U platformio
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -470,15 +481,14 @@ jobs:
         run: |
           set -x
           pio run --environment m5stack-cardputer
-      
+
       - name: Move firmware binary
-        if: always()
         continue-on-error: true
         working-directory: M5Stick-Launcher
         run: |
           set -x
           cp .pio/build/m5stack-stamps3/firmware.bin M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -487,7 +497,7 @@ jobs:
           pwd
           ls -all
           tree
-        
+
       - name: Upload M5Launcher firmware
         uses: actions/upload-artifact@v4
         with:
@@ -496,9 +506,6 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-
-
-
   compile_gb_m5cardputer:
     runs-on: ubuntu-latest
 
@@ -506,7 +513,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -530,14 +537,14 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          
+
           arduino-cli core install m5stack:esp32 --additional-urls "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
 
           arduino-cli lib install M5Cardputer --log-level warn --verbose
-          
+
       - name: Install esptool
         run: |
           set -x
@@ -550,7 +557,7 @@ jobs:
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               ./gb_cardputer.ino
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -560,7 +567,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create GameBoy Cardputer firmware
         working-directory: gb_cardputer
         run: |
@@ -570,7 +577,7 @@ jobs:
             0x0000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.bin
-        
+
       - name: Upload GameBoy Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
@@ -586,7 +593,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -610,14 +617,14 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          
+
           arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
 
           arduino-cli lib install M5StickCPlus2 IRremoteESP8266 TFT_eSPI ESP32Time --log-level warn --verbose
-          
+
       - name: Install esptool
         run: |
           set -x
@@ -630,7 +637,7 @@ jobs:
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               ./evilClock.ino
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -640,7 +647,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create Evil Clock firmware
         working-directory: evilClock/evilClock
         run: |
@@ -650,7 +657,7 @@ jobs:
             0x1000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.bin
-        
+
       - name: Upload Evil Clock firmware
         uses: actions/upload-artifact@v4
         with:
@@ -659,9 +666,6 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-
-   
-
   compile_evil_cardputer:
     runs-on: ubuntu-latest
 
@@ -669,7 +673,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      
+
       - name: Update submodules
         run: |
           git submodule update --init --recursive
@@ -693,14 +697,14 @@ jobs:
       - name: Install platform
         run: |
           set -x
-          
+
           arduino-cli core install m5stack:esp32 --additional-urls "file:///${PWD}/package_m5stack_index.json"
 
           arduino-cli core search m5stack
           arduino-cli board listall
 
           arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus "Adafruit NeoPixel" --log-level warn --verbose
-          
+
       - name: Install esptool
         run: |
           set -x
@@ -713,7 +717,7 @@ jobs:
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               ./Evil-Cardputer-v1-2-2.ino
-      
+
       - name: List all files
         if: always()
         continue-on-error: true
@@ -723,7 +727,7 @@ jobs:
           pwd
           ls -all
           tree
-      
+
       - name: Create Evil Cardputer firmware
         working-directory: Evil-M5Core2
         run: |
@@ -733,7 +737,7 @@ jobs:
             0x1000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bootloader.bin \
             0x8000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.partitions.bin \
             0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bin
-        
+
       - name: Upload Evil Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
@@ -742,54 +746,49 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
-
-
-
   create_release:
     runs-on: ubuntu-latest
     environment: github_release
-    # needs: 
-      # - compile_one_button_m5stickc_plus2
-      # - compile_user_demo_m5stickc_plus2
-      # - compile_user_demo_m5cardputer
-      # - compile_m5card_remote_m5cardputer
-      # - compile_resistor_m5cardputer
+    # needs:
+    # - compile_one_button_m5stickc_plus2
+    # - compile_user_demo_m5stickc_plus2
+    # - compile_user_demo_m5cardputer
+    # - compile_m5card_remote_m5cardputer
+    # - compile_resistor_m5cardputer
     # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
-    - id: version
-      name: Get Version
-      run: |
-        set -x
+      - id: version
+        name: Get Version
+        run: |
+          set -x
 
-        if [[ "${{ github.ref_type }}" == "tag" ]]; then
-          version=${{ github.ref_name }}
-        else
-          version="${GITHUB_SHA::7}"
-        fi
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
 
-        echo "version=${version}" > $GITHUB_OUTPUT
+          echo "version=${version}" > $GITHUB_OUTPUT
 
-    - uses: actions/download-artifact@v4
-      with:
-        merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
 
-    - name: List all files
-      if: always()
-      continue-on-error: true
-      run: |
-        set -x
-        pwd
-        ls -all
-        tree
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
 
-    - name: Create Release ${{ steps.version.outputs.version }}
-      uses: softprops/action-gh-release@v1
-      with:
-        name: Release ${{ steps.version.outputs.version }}
-        tag_name: ${{ steps.version.outputs.version }}
-        generate_release_notes: true
-        files: |
-          *.bin
-
-
+      - name: Create Release ${{ steps.version.outputs.version }}
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: |
+            *.bin
