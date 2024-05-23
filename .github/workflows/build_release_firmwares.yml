@@ -60,7 +60,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -141,7 +141,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -181,9 +181,9 @@ jobs:
         run: |
           set -x
 
-          pio pkg update --library m5stack/M5GFX
-
           cat platformio.ini
+
+          pio pkg update --library m5stack/M5GFX
 
           pio run
 
@@ -292,7 +292,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -372,7 +372,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -452,7 +452,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -520,7 +520,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -600,7 +600,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -680,7 +680,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force --remote
 
       - id: version
         name: Get Version
@@ -717,7 +717,7 @@ jobs:
       - name: Compile Evil Cardputer Sketch
         working-directory: Evil-M5Core2
         run: |
-          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer  -e \
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               ./Evil-Cardputer-v1-2-2.ino
