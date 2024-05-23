@@ -6,19 +6,22 @@
 	url = https://github.com/m5stack/M5StickCPlus2-UserDemo
 [submodule "M5Cardputer-UserDemo"]
 	path = M5Cardputer-UserDemo
-	url = https://github.com/m5stack/M5Cardputer-UserDemo.git
+	url = https://github.com/m5stack/M5Cardputer-UserDemo
 [submodule "M5CardRemote"]
 	path = M5CardRemote
-	url = https://github.com/VolosR/M5CardRemote/
+	url = https://github.com/VolosR/M5CardRemote
 [submodule "Cardputer"]
 	path = Cardputer
-	url = git@github.com:VolosR/Cardputer.git
+	url = https://github.com/VolosR/Cardputer
 [submodule "gb_cardputer"]
 	path = gb_cardputer
-	url = git@github.com:matthew-5pl/gb_cardputer.git
+	url = https://github.com/matthew-5pl/gb_cardputer
 [submodule "evilClock"]
 	path = evilClock
-	url = git@github.com:VolosR/evilClock.git
+	url = https://github.com/VolosR/evilClock
 [submodule "M5Stick-Launcher"]
 	path = M5Stick-Launcher
 	url = https://github.com/bmorcelli/M5Stick-Launcher
+[submodule "Evil-M5Core2"]
+	path = Evil-M5Core2
+	url = https://github.com/7h30th3r0n3/Evil-M5Core2
