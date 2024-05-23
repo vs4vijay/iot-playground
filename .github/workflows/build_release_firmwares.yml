@@ -166,6 +166,9 @@ jobs:
         working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
+
+          pio pkg update --library m5stack/M5GFX
+
           pio run
       
       - name: Move firmware binary
@@ -426,9 +429,6 @@ jobs:
 
   compile_m5launcher_m5cardputer:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: M5Stick-Launcher/Launcher
 
     steps:
       - uses: actions/checkout@v4
@@ -481,7 +481,7 @@ jobs:
       - name: Upload M5Launcher firmware
         uses: actions/upload-artifact@v4
         with:
-          path: M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
+          path: M5Stick-Launcher/M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: M5Launcher.M5Cardputer
           compression-level: 0
           if-no-files-found: error
@@ -689,7 +689,7 @@ jobs:
           arduino-cli core search m5stack
           arduino-cli board listall
 
-          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus adafruit_neopixel --log-level warn --verbose
+          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus Adafruit_NeoPixel --log-level warn --verbose
           
       - name: Install esptool
         run: |
