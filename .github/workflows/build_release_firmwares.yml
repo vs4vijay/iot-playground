@@ -189,9 +189,19 @@ jobs:
 
           pio run
 
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: M5StickCPlus2-UserDemo
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
       - name: Move firmware binary
         continue-on-error: true
-        # working-directory: M5StickCPlus2-UserDemo
+        working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
           cp .pio/build/m5stick-c/firmware.bin UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
@@ -199,6 +209,7 @@ jobs:
       - name: List all files
         if: always()
         continue-on-error: true
+        working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
           pwd
@@ -500,9 +511,10 @@ jobs:
 
       - name: Move firmware binary
         continue-on-error: true
+        working-directory: M5Stick-Launcher
         run: |
           set -x
-          cp M5Stick-Launcher/.pio/build/m5stack-cardputer/firmware.bin M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
+          cp .pio/build/m5stack-cardputer/firmware.bin M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
 
       - name: List all files
         if: always()
@@ -729,10 +741,7 @@ jobs:
       - name: Compile Evil Cardputer Sketch
         working-directory: Evil-M5Core2
         run: |
-          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
-                              --build-property build.partitions=huge_app \
-                              --build-property upload.maximum_size=3145728 \
-                              ./Evil-Cardputer-v1-2-2.ino
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e --build-property build.partitions=huge_app --build-property upload.maximum_size=3145728 ./Evil-Cardputer-v1-2-2.ino
 
       - name: List all files
         if: always()
