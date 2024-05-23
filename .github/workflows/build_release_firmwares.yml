@@ -183,13 +183,15 @@ jobs:
 
           cat platformio.ini
 
-          pio pkg update --library m5stack/M5GFX
+          # Update the M5GFX version
+          # sed -i 's/m5stack\/M5GFX @ .*/m5stack\/M5GFX @ 0.1.14/g' platformio.ini
+          pio pkg install -l m5stack/M5GFX
 
           pio run
 
       - name: Move firmware binary
         continue-on-error: true
-        working-directory: M5StickCPlus2-UserDemo
+        # working-directory: M5StickCPlus2-UserDemo
         run: |
           set -x
           cp .pio/build/m5stick-c/firmware.bin UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
@@ -485,17 +487,27 @@ jobs:
         run: |
           set -x
           pio run --environment m5stack-cardputer
-
-      - name: Move firmware binary
+      
+      - name: List all files
+        if: always()
         continue-on-error: true
         working-directory: M5Stick-Launcher
         run: |
           set -x
-          cp .pio/build/m5stack-stamps3/firmware.bin M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
+          pwd
+          ls -all
+          tree
+
+      - name: Move firmware binary
+        continue-on-error: true
+        run: |
+          set -x
+          cp M5Stick-Launcher/.pio/build/m5stack-cardputer/firmware.bin M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
 
       - name: List all files
         if: always()
         continue-on-error: true
+        working-directory: M5Stick-Launcher
         run: |
           set -x
           pwd
