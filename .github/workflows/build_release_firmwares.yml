@@ -743,7 +743,7 @@ jobs:
         working-directory: Evil-M5Core2
         run: |
           # Renaming as arduino doesn't compile when filename is diff then directory name
-          mv EEvil-Cardputer-v1-2-2.ino Evil-M5Core2.ino
+          mv Evil-Cardputer-v1-2-2.ino Evil-M5Core2.ino
 
           arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
                               --build-property build.partitions=huge_app \
