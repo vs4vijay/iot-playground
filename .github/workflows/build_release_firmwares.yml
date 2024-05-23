@@ -454,6 +454,16 @@ jobs:
 
       - name: Install PlatformIO core
         run: pip install -U platformio
+      
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: evilClock/evilClock
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
 
       - name: Compile using PlatformIO
         working-directory: M5Stick-Launcher
@@ -689,7 +699,7 @@ jobs:
           arduino-cli core search m5stack
           arduino-cli board listall
 
-          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus Adafruit_NeoPixel --log-level warn --verbose
+          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus "Adafruit NeoPixel" --log-level warn --verbose
           
       - name: Install esptool
         run: |
