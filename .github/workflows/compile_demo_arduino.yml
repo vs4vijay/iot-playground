@@ -9,13 +9,13 @@ on:
     tags:
       - "*"
     paths:
-      - demo/**
+      - demo_arduino/**
       - .github/workflows/demo_compile_arduino.yml
   pull_request:
     branches:
       - main
     paths:
-      - demo/**
+      - demo_arduino/**
       - .github/workflows/demo_compile_arduino.yml
   
 jobs:
@@ -29,7 +29,7 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           sketch-paths: |
-            - ./demo/demo.ino
+            - ./demo_arduino/demo.ino
           libraries: |
             - 
           enable-deltas-report: true
@@ -45,7 +45,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: demo/demo.ino.bin
+          path: demo_arduino/demo.ino.bin
           name: demo.og
           compression-level: 0
           if-no-files-found: error
@@ -85,16 +85,16 @@ jobs:
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               --libraries M5Cardputer,IRRemoteESP8266 \
-                              ./demo/demo.ino
+                              ./demo_arduino/demo.ino
       
       - name: Create firmware
         run: |
           set -x
 
-          esptool.py --chip esp32s3 merge_bin --output demo/demo.bin  \
-            0x0000 demo/build/m5stack.esp32.m5stack_cardputer/demo.ino.bootloader.bin \
-            0x8000 demo/build/m5stack.esp32.m5stack_cardputer/demo.ino.partitions.bin \
-            0x10000 demo/build/m5stack.esp32.m5stack_cardputer/demo.ino.bin
+          esptool.py --chip esp32s3 merge_bin --output demo_arduino/demo.bin  \
+            0x0000 demo_arduino/build/m5stack.esp32.m5stack_cardputer/demo.ino.bootloader.bin \
+            0x8000 demo_arduino/build/m5stack.esp32.m5stack_cardputer/demo.ino.partitions.bin \
+            0x10000 demo_arduino/build/m5stack.esp32.m5stack_cardputer/demo.ino.bin
 
       - name: List all files
         if: always()
@@ -109,7 +109,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          path: demo/demo.bin
+          path: demo_arduino/demo.bin
           name: demo
           compression-level: 0
           if-no-files-found: error

@@ -731,7 +731,8 @@ jobs:
           arduino-cli core search m5stack
           arduino-cli board listall
 
-          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus "Adafruit NeoPixel" --log-level warn --verbose
+          arduino-cli lib install M5Cardputer M5Unified IRremoteESP8266 ArduinoJson TinyGpsPlus \
+                                  "Adafruit NeoPixel" M5Stack_Avatar --log-level warn --verbose
 
       - name: Install esptool
         run: |
@@ -741,7 +742,23 @@ jobs:
       - name: Compile Evil Cardputer Sketch
         working-directory: Evil-M5Core2
         run: |
-          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e --build-property build.partitions=huge_app --build-property upload.maximum_size=3145728 ./Evil-Cardputer-v1-2-2.ino
+          # Creating a new directory
+          mkdir Evil-Cardputer
+          mv *Cardputer*.ino Evil-Cardputer/Evil-Cardputer.ino
+          cd Evil-Cardputer
+
+          # -zmuldefs
+          # 
+          # --build-property compiler.c.elf.libs.esp32=" -zmuldefs " \
+          # --build-property compiler.cpp.extra_flags="-zmuldefs" \
+          # --build-property compiler.c.elf.libs.esp32s3=-zmuldefs \
+          # --build-property compiler.c.elf.extra_flags=-zmuldefs \
+
+          arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
+                              --build-property build.partitions=huge_app \
+                              --build-property upload.maximum_size=3145728 \
+                              --build-property compiler.c.elf.extra_flags=-zmuldefs \
+                              ./Evil-Cardputer.ino
 
       - name: List all files
         if: always()
@@ -754,19 +771,19 @@ jobs:
           tree
 
       - name: Create Evil Cardputer firmware
-        working-directory: Evil-M5Core2
+        working-directory: Evil-M5Core2/Evil-Cardputer
         run: |
           set -x
 
           esptool.py --chip esp32s3 merge_bin --output Evil-Cardputer-${{ steps.version.outputs.version }}.bin \
-            0x1000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bootloader.bin \
-            0x8000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.partitions.bin \
-            0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bin
+            0x1000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.bin
 
       - name: Upload Evil Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
-          path: Evil-M5Core2/Evil-Cardputer-${{ steps.version.outputs.version }}.bin
+          path: Evil-M5Core2/Evil-Cardputer/Evil-Cardputer-${{ steps.version.outputs.version }}.bin
           name: Evil-Cardputer
           compression-level: 0
           if-no-files-found: error
