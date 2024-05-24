@@ -742,13 +742,15 @@ jobs:
       - name: Compile Evil Cardputer Sketch
         working-directory: Evil-M5Core2
         run: |
-          # Renaming as arduino doesn't compile when filename is diff then directory name
-          mv Evil-Cardputer-v1-2-2.ino Evil-M5Core2.ino
+          # Creating a new directory
+          mkdir Evil-Cardputer
+          mv *Cardputer*.ino Evil-Cardputer/Evil-Cardputer.ino
+          cd Evil-Cardputer
 
           arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
-                              ./Evil-M5Core2.ino
+                              ./Evil-Cardputer.ino
 
       - name: List all files
         if: always()
@@ -761,7 +763,7 @@ jobs:
           tree
 
       - name: Create Evil Cardputer firmware
-        working-directory: Evil-M5Core2
+        working-directory: Evil-M5Core2/Evil-Cardputer
         run: |
           set -x
 
@@ -773,7 +775,7 @@ jobs:
       - name: Upload Evil Cardputer firmware
         uses: actions/upload-artifact@v4
         with:
-          path: Evil-M5Core2/Evil-Cardputer-${{ steps.version.outputs.version }}.bin
+          path: Evil-M5Core2/Evil-Cardputer/Evil-Cardputer-${{ steps.version.outputs.version }}.bin
           name: Evil-Cardputer
           compression-level: 0
           if-no-files-found: error
