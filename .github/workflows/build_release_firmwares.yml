@@ -751,13 +751,13 @@ jobs:
           # 
           # --build-property compiler.c.elf.libs.esp32=" -zmuldefs " \
           # --build-property compiler.cpp.extra_flags="-zmuldefs" \
-          # esp32s3
+          # --build-property compiler.c.elf.libs.esp32s3=-zmuldefs \
+          # --build-property compiler.c.elf.extra_flags=-zmuldefs \
 
           arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
-                              --build-property build.extra_flags.esp32s3="-w -DARDUINO_USB_CDC_ON_BOOT=0" \
-                              --build-property compiler.c.elf.libs.esp32s3=-zmuldefs \
+                              --build-property compiler.c.elf.extra_flags=-zmuldefs \
                               ./Evil-Cardputer.ino
 
       - name: List all files
