@@ -776,9 +776,9 @@ jobs:
           set -x
 
           esptool.py --chip esp32s3 merge_bin --output Evil-Cardputer-${{ steps.version.outputs.version }}.bin \
-            0x1000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bootloader.bin \
-            0x8000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.partitions.bin \
-            0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer-v1-2-2.ino.bin
+            0x1000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.bootloader.bin \
+            0x8000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.partitions.bin \
+            0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.bin
 
       - name: Upload Evil Cardputer firmware
         uses: actions/upload-artifact@v4
