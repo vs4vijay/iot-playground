@@ -8,10 +8,11 @@
         "pip install esptool.py",
 
         // Install Arduino and M5Stack core
-        "curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh",
-        "arduino-cli core install m5stack:esp32 --additional-urls 'https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json'",
+        // "curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh",
+        // "arduino-cli core install m5stack:esp32 --additional-urls 'https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json'",
     ],
     "features": {
-        "ghcr.io/devcontainers/features/rust:1": {}
+        "ghcr.io/devcontainers/features/rust:1": {},
+        "ghcr.io/bartventer/arch-devcontainer-features/docker-in-docker:1": {}
     }
 }
