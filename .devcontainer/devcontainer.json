@@ -5,7 +5,7 @@
         "pip install platformio",
 
         // Install esptool
-        "pip install esptool.py",
+        "pip install esptool.py"
 
         // Install Arduino and M5Stack core
         // "curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh",
