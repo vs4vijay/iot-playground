@@ -60,15 +60,12 @@ arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e \
 ### Merge bootloader, partiotion table with app
 
 ```bash
-
 esptool.py --chip esp32 merge_bin -o flash_image.bin @flash_args
 
 esptool.py --chip esp32s3 merge_bin --output M5CardRemote.M5Cardputer.bin \
     0x0000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bootloader.bin \
     0x8000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.partitions.bin \
     0x10000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bin
-
-
 ```
 
 ---
@@ -81,21 +78,23 @@ esptool.py --chip esp32s3 merge_bin --output M5CardRemote.M5Cardputer.bin \
 sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
 
 mkdir ~/esp
-cd ~/esp
 
-git clone -b release/v5.3 --recursive https://github.com/espressif/esp-idf.git --depth 1
+git clone -b release/v5.3 --recursive https://github.com/espressif/esp-idf.git --depth 1 ~/esp/esp-idf
 
 cd ~/esp/esp-idf
 ./install.sh
 
 source ~/esp/esp-idf/export.sh
+# OR
+. ~/esp/esp-idf/export.sh
 ```
 
 
 ### Compile firmware with ESP IDF
-
-
+- cd into the project
 ```bash
+idf.py menuconfig
+
 idf.py build
 ```
 
