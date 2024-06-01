@@ -75,7 +75,7 @@ esptool.py --chip esp32s3 merge_bin --output M5CardRemote.M5Cardputer.bin \
 ### Install ESP IDF
 
 ```bash
-sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
+sudo apt install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
 
 mkdir ~/esp
 
@@ -102,7 +102,9 @@ idf.py build
 ### Merge bootloader, partiotion table with app
 
 ```bash
-esptool.py --chip esp32s3 merge_bin -o ../Demo.ESP_IDF.bin --fill-flash-size 4MB @flash_args
+cd build/
+
+esptool.py --chip esp32 merge_bin -o ../firmware.bin --fill-flash-size 4MB @flash_args
 ```
 
 ### Other commands
@@ -124,10 +126,26 @@ idf.py add-dependency
 - Install esptool.py - `pip install -U esptool`
 
 ```bash
-
 esptool write_flash -z 0 name.bin
+```
+
+## QEMU Emulation
+
+```bash
+# Install pre-requisites
+sudo apt install -y libgcrypt20 libglib2.0-0 libpixman-1-0 libsdl2-2.0-0 libslirp0
+
+# Install
+idf_tools.py install qemu-xtensa qemu-riscv32
+
+# Reload env.
+. ~/esp/esp-idf/export.sh
+
+# Boot firmware image
+qemu-system-xtensa -machine esp32 -nographic -drive file=firmware1.bin,if=mtd,format=raw
 
 ```
+
 ---
 
 ### Development Notes
