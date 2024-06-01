@@ -143,8 +143,9 @@ idf_tools.py install qemu-xtensa qemu-riscv32
 
 # Boot firmware image
 qemu-system-xtensa -machine esp32 -nographic -drive file=firmware1.bin,if=mtd,format=raw
-
 ```
+- Press Ctrl+A then C to exit qemu
+
 
 ---
 

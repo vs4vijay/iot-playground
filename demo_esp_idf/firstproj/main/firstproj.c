@@ -4,6 +4,7 @@
 void app_main(void)
 {
     ESP_LOGI("firstproj", "Started first project");
+    printf("Trying to print from printf");
 
     // while (true)
     // {
