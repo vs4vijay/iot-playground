@@ -1,0 +1,60 @@
+name: Compile Demo with Rust
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+    paths:
+      - demo_rust/**
+      - .github/workflows/compile_demo_rust.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - demo_rust/**
+      - .github/workflows/compile_demo_rust.yml
+
+jobs:
+  compile_demo_rust:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Install espup
+        run: |
+          cargo install espup
+          espup install
+
+      - name: Add espup to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Build Rust project
+        run: |
+          cd demo_rust
+          cargo build --release
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          path: demo_rust/target/xtensa-esp32-espidf/release/demo_rust
+          name: demo_rust
+          compression-level: 0
+          if-no-files-found: error
