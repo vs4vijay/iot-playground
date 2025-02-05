@@ -121,6 +121,30 @@ idf.py add-dependency
 
 ---
 
+## Rust
+
+### Install Rust
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+### Install espup
+
+```bash
+cargo install espup
+espup install
+```
+
+### Compile firmware with Rust
+
+```bash
+cd demo_rust
+cargo build --release
+```
+
+---
+
 ## Flash firmware
 
 - Install esptool.py - `pip install -U esptool`
