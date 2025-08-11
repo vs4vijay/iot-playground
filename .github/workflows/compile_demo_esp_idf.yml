@@ -27,7 +27,7 @@ jobs:
         working-directory: demo_esp_idf
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       
       - name: Install esptool
         run: |
