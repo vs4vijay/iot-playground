@@ -1,5 +1,5 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/universal:2"
+    "image": "mcr.microsoft.com/devcontainers/universal:4"
     // "postCreateCommand": [
     //     // Install platformio
     //     "pip install platformio",
