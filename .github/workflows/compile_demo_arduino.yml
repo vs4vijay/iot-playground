@@ -43,7 +43,7 @@ jobs:
           tree
         
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: demo_arduino/demo.ino.bin
           name: demo.og
@@ -107,7 +107,7 @@ jobs:
       # TODO: Validate
         
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: demo_arduino/demo.bin
           name: demo

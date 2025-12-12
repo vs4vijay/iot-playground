@@ -52,7 +52,7 @@ jobs:
           tree
 
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: demo_rust/target/xtensa-esp32-espidf/release/demo_rust
           name: demo_rust
