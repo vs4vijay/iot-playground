@@ -25,6 +25,8 @@ let state = {
 };
 
 // Project definitions with versions
+// NOTE: Firmware URLs point to official releases in this repository
+// Users can also enter custom firmware URLs via the input field
 const projectData = {
     esp32: {
         name: 'ESP32 Generic',
@@ -348,12 +350,22 @@ async function flashFirmware() {
         return;
     }
     
-    // Show confirmation
+    // Enhanced confirmation dialog with clear warnings
+    const deviceType = state.device?.chipType || 'Unknown';
+    const fileName = state.firmwareUrl.split('/').pop();
+    
     const confirmed = confirm(
-        `Flash firmware to device?\n\n` +
-        `Device: ${state.device?.chipType || 'Unknown'}\n` +
-        `Firmware: ${state.firmwareUrl}\n\n` +
-        `⚠️ This will erase all data on the device.`
+        `⚠️ FIRMWARE FLASH CONFIRMATION\n\n` +
+        `This will ERASE ALL DATA on your device and install new firmware.\n\n` +
+        `Device: ${deviceType}\n` +
+        `Firmware: ${fileName}\n` +
+        `Source: ${state.firmwareUrl}\n\n` +
+        `IMPORTANT WARNINGS:\n` +
+        `• All existing data will be permanently deleted\n` +
+        `• Only flash firmware from trusted sources\n` +
+        `• Incorrect firmware can brick your device\n` +
+        `• Keep the device connected during the entire process\n\n` +
+        `Do you want to continue?`
     );
     
     if (!confirmed) {
@@ -369,7 +381,9 @@ async function flashFirmware() {
     try {
         logToConsole('Starting firmware flash process...', 'info');
         
-        // Simulate flashing process (in production, use esptool-js)
+        // NOTE: This is a UI simulation for demonstration purposes
+        // In production, integrate esptool-js or similar library for actual flashing
+        // Example: await esptool.flash(state.firmwareUrl, state.port);
         await simulateFlashing();
         
         logToConsole('✓ Firmware flashed successfully!', 'success');
@@ -392,6 +406,19 @@ async function flashFirmware() {
     }
 }
 
+/**
+ * Simulates the firmware flashing process for UI demonstration
+ * 
+ * NOTE: This is ONLY a simulation for testing the user interface.
+ * It does NOT perform actual firmware flashing to hardware.
+ * 
+ * For production use with real devices, replace this with:
+ * - esptool-js for ESP32/ESP8266 devices
+ * - Web USB API for devices that support it
+ * - Appropriate flashing library for other platforms
+ * 
+ * @returns {Promise<void>}
+ */
 async function simulateFlashing() {
     const steps = [
         { progress: 10, status: 'Connecting to device...', time: 500 },
