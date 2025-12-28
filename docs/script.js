@@ -54,6 +54,11 @@ const projectData = {
         name: 'M5Stack Cardputer',
         chipFamily: 'ESP32-S3',
         versions: [
+            // NOTE: This URL points to a release in this repository for demonstration
+            // In production, firmware URLs should point to:
+            // - Official manufacturer firmware repositories (e.g., M5Stack official releases)
+            // - Verified and trusted sources only
+            // - Consider implementing firmware signing and verification
             { id: '6f63e83', name: 'UserDemo (6f63e83)', date: '2024-01-15', description: 'Official M5Stack user demo', url: 'https://github.com/vs4vijay/iot-playground/releases/download/6f63e83/UserDemo-6f63e83.M5Cardputer.bin' },
             { id: 'm5cardremote', name: 'M5Card Remote', date: '2024-01-10', description: 'IR remote control app' },
             { id: 'gameboy', name: 'GameBoy Emulator', date: '2024-01-05', description: 'Full GameBoy emulator' }
@@ -645,40 +650,61 @@ function disableControls() {
     });
 }
 
+/**
+ * Parses and validates URL query parameters
+ * Supports: ?firmware=<url>, ?project=<id>, ?version=<id>
+ * 
+ * NOTE: Parameters are validated before use to prevent security issues
+ */
 function parseURLParameters() {
     const urlParams = new URLSearchParams(window.location.search);
     
     // Check for firmware parameter
     const firmwareUrl = urlParams.get('firmware');
     if (firmwareUrl) {
+        // Validate and sanitize firmware URL
         const firmwareInput = document.getElementById('firmwareInput');
-        if (firmwareInput) {
+        if (firmwareInput && isValidURL(firmwareUrl)) {
+            // URL validation will be performed by validateFirmwareUrl
             firmwareInput.value = firmwareUrl;
             validateFirmwareUrl(firmwareUrl);
             logToConsole(`Firmware URL loaded from URL parameter: ${firmwareUrl}`, 'info');
+        } else {
+            logToConsole('⚠️ Invalid firmware URL in query parameter', 'warning');
         }
     }
     
     // Check for project parameter
     const project = urlParams.get('project');
     if (project) {
+        // Validate project exists in projectData (prevents injection)
         const projectSelector = document.getElementById('projectSelector');
         if (projectSelector && projectData[project]) {
             projectSelector.value = project;
             projectSelector.dispatchEvent(new Event('change'));
             logToConsole(`Project loaded from URL parameter: ${project}`, 'info');
+        } else if (project) {
+            logToConsole(`⚠️ Unknown project in URL parameter: ${project}`, 'warning');
         }
     }
     
     // Check for version parameter
     const version = urlParams.get('version');
     if (version && project) {
+        // Validate version exists for the selected project
         setTimeout(() => {
             const versionSelector = document.getElementById('versionSelector');
             if (versionSelector) {
-                versionSelector.value = version;
-                versionSelector.dispatchEvent(new Event('change'));
-                logToConsole(`Version loaded from URL parameter: ${version}`, 'info');
+                const projectVersions = projectData[project]?.versions || [];
+                const validVersion = projectVersions.find(v => v.id === version);
+                
+                if (validVersion) {
+                    versionSelector.value = version;
+                    versionSelector.dispatchEvent(new Event('change'));
+                    logToConsole(`Version loaded from URL parameter: ${version}`, 'info');
+                } else {
+                    logToConsole(`⚠️ Unknown version for project ${project}: ${version}`, 'warning');
+                }
             }
         }, 100);
     }
