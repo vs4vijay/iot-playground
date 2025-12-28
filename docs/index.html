@@ -73,25 +73,111 @@
         </div>
     </section>
     
-    <!-- Link Input Section -->
-    <section class="link-input-section">
+    <!-- Firmware Flasher Section -->
+    <section class="firmware-flasher-section">
         <div class="container">
-            <div class="link-input-container">
-                <h2>🔗 Link Analyzer</h2>
-                <p>Enter any GitHub, Arduino, or IoT-related link to analyze and explore</p>
+            <div class="firmware-flasher-container">
+                <h2>⚡ Firmware Flasher</h2>
+                <p>Flash firmware to your IoT device directly from your browser</p>
+                
+                <!-- Project Selection -->
+                <div class="selection-group">
+                    <div class="selector-container">
+                        <label for="projectSelector">Select IoT Project</label>
+                        <select id="projectSelector" class="project-selector">
+                            <option value="">Choose a project...</option>
+                            <option value="esp32">ESP32 Generic</option>
+                            <option value="esp8266">ESP8266 Generic</option>
+                            <option value="m5cardputer">M5Stack Cardputer</option>
+                            <option value="m5stickc">M5StickC Plus2</option>
+                            <option value="rpi-pico">Raspberry Pi Pico</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-container">
+                        <label for="versionSelector">Select Firmware Version</label>
+                        <select id="versionSelector" class="version-selector" disabled>
+                            <option value="">Select project first...</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Firmware Link Input -->
                 <div class="input-group">
                     <input 
                         type="url" 
-                        id="linkInput" 
-                        class="link-input" 
-                        placeholder="https://github.com/example/iot-project"
-                        aria-label="Enter URL to analyze"
+                        id="firmwareInput" 
+                        class="firmware-input" 
+                        placeholder="https://example.com/firmware.bin"
+                        aria-label="Enter firmware URL"
                     >
-                    <button id="submitLink" class="btn btn-primary">
-                        🔍 Analyze
+                    <button id="validateFirmware" class="btn btn-secondary">
+                        ✓ Validate
                     </button>
                 </div>
-                <div id="inputFeedback" class="input-feedback"></div>
+                <div id="firmwareFeedback" class="firmware-feedback"></div>
+                
+                <!-- Connection and Flashing -->
+                <div class="flashing-controls">
+                    <button id="connectDevice" class="btn btn-primary" disabled>
+                        🔌 Connect Device
+                    </button>
+                    <button id="flashFirmware" class="btn btn-primary flash-btn" disabled>
+                        ⚡ Flash Firmware
+                    </button>
+                    <button id="cancelFlash" class="btn btn-secondary" style="display: none;">
+                        ✕ Cancel
+                    </button>
+                </div>
+                
+                <!-- Connection Status -->
+                <div id="connectionStatus" class="connection-status" style="display: none;">
+                    <span class="status-indicator"></span>
+                    <span class="status-text">Disconnected</span>
+                </div>
+                
+                <!-- Device Info -->
+                <div id="deviceInfo" class="device-info" style="display: none;"></div>
+                
+                <!-- Progress Section -->
+                <div id="progressSection" class="progress-section" style="display: none;">
+                    <div class="progress-header">
+                        <span id="progressStatus">Preparing...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-details">
+                        <span id="transferSpeed">--</span>
+                        <span id="timeRemaining">--</span>
+                    </div>
+                </div>
+                
+                <!-- Console Output -->
+                <div id="consoleOutput" class="console-output" style="display: none;">
+                    <div class="console-header">
+                        <span>📟 Console Output</span>
+                        <button id="clearConsole" class="btn-clear">Clear</button>
+                    </div>
+                    <div id="consoleLog" class="console-log"></div>
+                </div>
+                
+                <!-- Example Firmware -->
+                <div class="examples-section">
+                    <h3>📦 Example Firmware</h3>
+                    <div class="examples-grid">
+                        <button class="example-btn" data-project="esp32" data-url="https://github.com/espressif/arduino-esp32/releases/download/2.0.14/esp32-blink.bin">
+                            ESP32 Blink
+                        </button>
+                        <button class="example-btn" data-project="esp32" data-url="https://github.com/espressif/arduino-esp32/releases/download/2.0.14/esp32-wifi-scan.bin">
+                            ESP32 WiFi Scanner
+                        </button>
+                        <button class="example-btn" data-project="rpi-pico" data-url="https://micropython.org/download/rp2-pico/rp2-pico-latest.uf2">
+                            Pico MicroPython
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

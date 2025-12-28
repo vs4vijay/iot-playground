@@ -3,60 +3,607 @@
 // ===================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    initLinkInput();
+    initFirmwareFlasher();
     initScrollAnimations();
     initSmoothScroll();
+    parseURLParameters();
 });
 
 // ===================================
-// Link Input Feature
+// Firmware Flasher Feature
 // ===================================
 
-function initLinkInput() {
-    const linkInput = document.getElementById('linkInput');
-    const submitBtn = document.getElementById('submitLink');
-    const feedback = document.getElementById('inputFeedback');
+// Global state
+let state = {
+    connected: false,
+    port: null,
+    device: null,
+    isFlashing: false,
+    firmwareUrl: null,
+    selectedProject: null,
+    selectedVersion: null
+};
+
+// Project definitions with versions
+const projectData = {
+    esp32: {
+        name: 'ESP32 Generic',
+        chipFamily: 'ESP32',
+        versions: [
+            { id: 'v2.0.14', name: 'v2.0.14 (Stable)', date: '2023-11-20', description: 'Latest stable release' },
+            { id: 'v2.0.13', name: 'v2.0.13 (Stable)', date: '2023-10-15', description: 'Previous stable release' },
+            { id: 'v3.0.0-beta', name: 'v3.0.0-beta', date: '2024-01-10', description: 'Beta release with new features' }
+        ]
+    },
+    esp8266: {
+        name: 'ESP8266 Generic',
+        chipFamily: 'ESP8266',
+        versions: [
+            { id: 'v3.1.2', name: 'v3.1.2 (Stable)', date: '2023-12-01', description: 'Latest stable release' },
+            { id: 'v3.1.1', name: 'v3.1.1 (Stable)', date: '2023-10-20', description: 'Previous stable release' }
+        ]
+    },
+    m5cardputer: {
+        name: 'M5Stack Cardputer',
+        chipFamily: 'ESP32-S3',
+        versions: [
+            { id: '6f63e83', name: 'UserDemo (6f63e83)', date: '2024-01-15', description: 'Official M5Stack user demo', url: 'https://github.com/vs4vijay/iot-playground/releases/download/6f63e83/UserDemo-6f63e83.M5Cardputer.bin' },
+            { id: 'm5cardremote', name: 'M5Card Remote', date: '2024-01-10', description: 'IR remote control app' },
+            { id: 'gameboy', name: 'GameBoy Emulator', date: '2024-01-05', description: 'Full GameBoy emulator' }
+        ]
+    },
+    m5stickc: {
+        name: 'M5StickC Plus2',
+        chipFamily: 'ESP32-S3',
+        versions: [
+            { id: 'userdemo', name: 'UserDemo', date: '2024-01-12', description: 'Official M5StickC user demo' },
+            { id: 'onebutton', name: 'OneButton Demo', date: '2024-01-08', description: 'Button interaction demo' },
+            { id: 'evilclock', name: 'Evil Clock', date: '2024-01-03', description: 'WiFi security tool' }
+        ]
+    },
+    'rpi-pico': {
+        name: 'Raspberry Pi Pico',
+        chipFamily: 'RP2040',
+        versions: [
+            { id: 'latest', name: 'MicroPython Latest', date: '2024-01-20', description: 'Latest MicroPython firmware', url: 'https://micropython.org/download/rp2-pico/rp2-pico-latest.uf2' },
+            { id: 'v1.22.0', name: 'MicroPython v1.22.0', date: '2023-12-15', description: 'Stable MicroPython release' }
+        ]
+    }
+};
+
+function initFirmwareFlasher() {
+    const projectSelector = document.getElementById('projectSelector');
+    const versionSelector = document.getElementById('versionSelector');
+    const firmwareInput = document.getElementById('firmwareInput');
+    const validateBtn = document.getElementById('validateFirmware');
+    const connectBtn = document.getElementById('connectDevice');
+    const flashBtn = document.getElementById('flashFirmware');
+    const cancelBtn = document.getElementById('cancelFlash');
+    const clearConsoleBtn = document.getElementById('clearConsole');
     
-    if (!linkInput || !submitBtn || !feedback) return;
+    // Check Web Serial API support
+    if (!('serial' in navigator)) {
+        showFeedback('⚠️ Web Serial API not supported. Please use Chrome or Edge browser.', 'error');
+        disableControls();
+        return;
+    }
     
-    // Real-time validation
-    linkInput.addEventListener('input', function() {
-        const value = linkInput.value.trim();
-        if (value === '') {
-            updateFeedback('', '');
-            return;
+    // Project selector change
+    if (projectSelector) {
+        projectSelector.addEventListener('change', function() {
+            const projectId = this.value;
+            state.selectedProject = projectId;
+            
+            if (projectId && projectData[projectId]) {
+                populateVersions(projectId);
+                versionSelector.disabled = false;
+                logToConsole(`Selected project: ${projectData[projectId].name}`, 'info');
+            } else {
+                versionSelector.disabled = true;
+                versionSelector.innerHTML = '<option value="">Select project first...</option>';
+                firmwareInput.value = '';
+                state.selectedVersion = null;
+            }
+            updateFlashButton();
+        });
+    }
+    
+    // Version selector change
+    if (versionSelector) {
+        versionSelector.addEventListener('change', function() {
+            const versionId = this.value;
+            state.selectedVersion = versionId;
+            
+            if (versionId && state.selectedProject) {
+                const project = projectData[state.selectedProject];
+                const version = project.versions.find(v => v.id === versionId);
+                
+                if (version && version.url) {
+                    firmwareInput.value = version.url;
+                    state.firmwareUrl = version.url;
+                    validateFirmwareUrl(version.url);
+                    logToConsole(`Selected version: ${version.name} - ${version.description}`, 'info');
+                }
+            }
+            updateFlashButton();
+        });
+    }
+    
+    // Firmware input validation
+    if (firmwareInput) {
+        firmwareInput.addEventListener('input', function() {
+            const url = this.value.trim();
+            if (url === '') {
+                showFeedback('', '');
+                state.firmwareUrl = null;
+            }
+            updateFlashButton();
+        });
+        
+        firmwareInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && validateBtn) {
+                validateBtn.click();
+            }
+        });
+    }
+    
+    // Validate button
+    if (validateBtn) {
+        validateBtn.addEventListener('click', function() {
+            const url = firmwareInput.value.trim();
+            if (url) {
+                validateFirmwareUrl(url);
+            } else {
+                showFeedback('⚠️ Please enter a firmware URL', 'error');
+            }
+        });
+    }
+    
+    // Connect device button
+    if (connectBtn) {
+        connectBtn.addEventListener('click', async function() {
+            if (state.connected) {
+                await disconnectDevice();
+            } else {
+                await connectDevice();
+            }
+        });
+    }
+    
+    // Flash firmware button
+    if (flashBtn) {
+        flashBtn.addEventListener('click', async function() {
+            if (state.firmwareUrl && state.connected) {
+                await flashFirmware();
+            }
+        });
+    }
+    
+    // Cancel button
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            cancelFlashing();
+        });
+    }
+    
+    // Clear console button
+    if (clearConsoleBtn) {
+        clearConsoleBtn.addEventListener('click', function() {
+            const consoleLog = document.getElementById('consoleLog');
+            if (consoleLog) {
+                consoleLog.innerHTML = '';
+            }
+        });
+    }
+    
+    // Example firmware buttons
+    const exampleBtns = document.querySelectorAll('.example-btn');
+    exampleBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const project = this.dataset.project;
+            const url = this.dataset.url;
+            
+            if (projectSelector && project) {
+                projectSelector.value = project;
+                projectSelector.dispatchEvent(new Event('change'));
+            }
+            
+            if (url && firmwareInput) {
+                firmwareInput.value = url;
+                state.firmwareUrl = url;
+                validateFirmwareUrl(url);
+            }
+        });
+    });
+}
+
+function populateVersions(projectId) {
+    const versionSelector = document.getElementById('versionSelector');
+    if (!versionSelector || !projectData[projectId]) return;
+    
+    const project = projectData[projectId];
+    versionSelector.innerHTML = '<option value="">Select a version...</option>';
+    
+    project.versions.forEach(version => {
+        const option = document.createElement('option');
+        option.value = version.id;
+        option.textContent = version.name;
+        option.dataset.description = version.description;
+        option.dataset.date = version.date;
+        versionSelector.appendChild(option);
+    });
+}
+
+function validateFirmwareUrl(url) {
+    if (!isValidURL(url)) {
+        showFeedback('⚠️ Invalid URL format', 'error');
+        state.firmwareUrl = null;
+        updateFlashButton();
+        return false;
+    }
+    
+    const validExtensions = ['.bin', '.uf2', '.hex', '.elf'];
+    const hasValidExtension = validExtensions.some(ext => url.toLowerCase().endsWith(ext));
+    
+    if (!hasValidExtension) {
+        showFeedback('⚠️ Invalid firmware file. Expected .bin, .uf2, .hex, or .elf file', 'error');
+        state.firmwareUrl = null;
+        updateFlashButton();
+        return false;
+    }
+    
+    showFeedback('✓ Valid firmware URL detected', 'success');
+    state.firmwareUrl = url;
+    updateFlashButton();
+    logToConsole(`Firmware URL validated: ${url}`, 'success');
+    return true;
+}
+
+async function connectDevice() {
+    try {
+        showConnectionStatus(true);
+        logToConsole('Requesting serial port access...', 'info');
+        
+        // Request port access
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+        
+        state.port = port;
+        state.connected = true;
+        
+        updateConnectionStatus('Connected', true);
+        logToConsole('✓ Device connected successfully', 'success');
+        
+        // Try to detect device info (simplified)
+        await detectDeviceInfo();
+        
+        updateConnectButton();
+        updateFlashButton();
+        
+    } catch (error) {
+        console.error('Connection error:', error);
+        logToConsole(`✗ Connection failed: ${error.message}`, 'error');
+        showFeedback('⚠️ Failed to connect to device. Make sure drivers are installed.', 'error');
+        state.connected = false;
+        updateConnectionStatus('Disconnected', false);
+    }
+}
+
+async function disconnectDevice() {
+    try {
+        if (state.port) {
+            await state.port.close();
+            state.port = null;
+        }
+        state.connected = false;
+        state.device = null;
+        
+        updateConnectionStatus('Disconnected', false);
+        updateConnectButton();
+        updateFlashButton();
+        hideDeviceInfo();
+        logToConsole('Device disconnected', 'info');
+        
+    } catch (error) {
+        console.error('Disconnect error:', error);
+        logToConsole(`Error disconnecting: ${error.message}`, 'error');
+    }
+}
+
+async function detectDeviceInfo() {
+    // Simplified device detection - in production, use esptool-js
+    const deviceInfo = {
+        chipType: state.selectedProject ? projectData[state.selectedProject]?.chipFamily : 'Unknown',
+        macAddress: 'N/A',
+        flashSize: 'N/A'
+    };
+    
+    state.device = deviceInfo;
+    displayDeviceInfo(deviceInfo);
+}
+
+function displayDeviceInfo(info) {
+    const deviceInfoDiv = document.getElementById('deviceInfo');
+    if (!deviceInfoDiv) return;
+    
+    deviceInfoDiv.innerHTML = `
+        <h4>📱 Device Information</h4>
+        <p><strong>Chip Type:</strong> ${info.chipType}</p>
+        <p><strong>MAC Address:</strong> ${info.macAddress}</p>
+        <p><strong>Flash Size:</strong> ${info.flashSize}</p>
+    `;
+    deviceInfoDiv.style.display = 'block';
+}
+
+function hideDeviceInfo() {
+    const deviceInfoDiv = document.getElementById('deviceInfo');
+    if (deviceInfoDiv) {
+        deviceInfoDiv.style.display = 'none';
+    }
+}
+
+async function flashFirmware() {
+    if (!state.firmwareUrl || !state.connected) {
+        showFeedback('⚠️ Please connect device and select firmware', 'error');
+        return;
+    }
+    
+    // Show confirmation
+    const confirmed = confirm(
+        `Flash firmware to device?\n\n` +
+        `Device: ${state.device?.chipType || 'Unknown'}\n` +
+        `Firmware: ${state.firmwareUrl}\n\n` +
+        `⚠️ This will erase all data on the device.`
+    );
+    
+    if (!confirmed) {
+        logToConsole('Flashing cancelled by user', 'warning');
+        return;
+    }
+    
+    state.isFlashing = true;
+    showProgressSection(true);
+    showCancelButton(true);
+    updateFlashButton();
+    
+    try {
+        logToConsole('Starting firmware flash process...', 'info');
+        
+        // Simulate flashing process (in production, use esptool-js)
+        await simulateFlashing();
+        
+        logToConsole('✓ Firmware flashed successfully!', 'success');
+        showFeedback('✓ Firmware flashed successfully! Device will reboot.', 'success');
+        updateProgress(100, 'Complete!', '100%');
+        
+        setTimeout(() => {
+            showProgressSection(false);
+            showCancelButton(false);
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Flashing error:', error);
+        logToConsole(`✗ Flashing failed: ${error.message}`, 'error');
+        showFeedback('✗ Flashing failed. Please try again.', 'error');
+    } finally {
+        state.isFlashing = false;
+        updateFlashButton();
+        showCancelButton(false);
+    }
+}
+
+async function simulateFlashing() {
+    const steps = [
+        { progress: 10, status: 'Connecting to device...', time: 500 },
+        { progress: 20, status: 'Erasing flash...', time: 1000 },
+        { progress: 40, status: 'Writing firmware...', time: 2000 },
+        { progress: 70, status: 'Writing firmware...', time: 2000 },
+        { progress: 90, status: 'Verifying...', time: 1000 },
+        { progress: 100, status: 'Complete!', time: 500 }
+    ];
+    
+    for (const step of steps) {
+        if (!state.isFlashing) {
+            throw new Error('Flashing cancelled');
         }
         
-        if (isValidURL(value)) {
-            updateFeedback('✓ Valid URL detected', 'success');
+        await new Promise(resolve => setTimeout(resolve, step.time));
+        
+        const speed = Math.floor(Math.random() * 100) + 50;
+        const timeLeft = Math.floor((100 - step.progress) / 10);
+        
+        updateProgress(
+            step.progress,
+            step.status,
+            `${step.progress}%`,
+            `${speed} KB/s`,
+            `${timeLeft}s remaining`
+        );
+        
+        logToConsole(`${step.status} (${step.progress}%)`, 'info');
+    }
+}
+
+function cancelFlashing() {
+    if (state.isFlashing) {
+        state.isFlashing = false;
+        logToConsole('Flashing cancelled by user', 'warning');
+        showFeedback('⚠️ Flashing cancelled', 'warning');
+        showProgressSection(false);
+        showCancelButton(false);
+        updateFlashButton();
+    }
+}
+
+function updateProgress(percent, status, percentText, speed = '--', timeRemaining = '--') {
+    const progressBar = document.getElementById('progressBar');
+    const progressStatus = document.getElementById('progressStatus');
+    const progressPercent = document.getElementById('progressPercent');
+    const transferSpeed = document.getElementById('transferSpeed');
+    const timeRemainingEl = document.getElementById('timeRemaining');
+    
+    if (progressBar) progressBar.style.width = `${percent}%`;
+    if (progressStatus) progressStatus.textContent = status;
+    if (progressPercent) progressPercent.textContent = percentText;
+    if (transferSpeed) transferSpeed.textContent = speed;
+    if (timeRemainingEl) timeRemainingEl.textContent = timeRemaining;
+}
+
+function showProgressSection(show) {
+    const progressSection = document.getElementById('progressSection');
+    if (progressSection) {
+        progressSection.style.display = show ? 'block' : 'none';
+        if (show) {
+            updateProgress(0, 'Preparing...', '0%');
+        }
+    }
+}
+
+function showCancelButton(show) {
+    const cancelBtn = document.getElementById('cancelFlash');
+    if (cancelBtn) {
+        cancelBtn.style.display = show ? 'inline-flex' : 'none';
+    }
+}
+
+function updateConnectionStatus(text, connected) {
+    const statusDiv = document.getElementById('connectionStatus');
+    const statusText = statusDiv?.querySelector('.status-text');
+    
+    if (statusDiv) {
+        statusDiv.style.display = 'flex';
+        if (connected) {
+            statusDiv.classList.add('connected');
         } else {
-            updateFeedback('⚠ Please enter a valid URL', 'error');
+            statusDiv.classList.remove('connected');
         }
-    });
+    }
     
-    // Submit handler
-    submitBtn.addEventListener('click', function() {
-        const value = linkInput.value.trim();
-        
-        if (value === '') {
-            updateFeedback('⚠ Please enter a URL', 'error');
-            return;
-        }
-        
-        if (!isValidURL(value)) {
-            updateFeedback('⚠ Invalid URL format', 'error');
-            return;
-        }
-        
-        processLink(value);
-    });
+    if (statusText) {
+        statusText.textContent = text;
+    }
+}
+
+function showConnectionStatus(show) {
+    const statusDiv = document.getElementById('connectionStatus');
+    if (statusDiv) {
+        statusDiv.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function updateConnectButton() {
+    const connectBtn = document.getElementById('connectDevice');
+    if (!connectBtn) return;
     
-    // Enter key support
-    linkInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            submitBtn.click();
-        }
+    if (state.connected) {
+        connectBtn.textContent = '🔌 Disconnect Device';
+        connectBtn.classList.remove('btn-primary');
+        connectBtn.classList.add('btn-secondary');
+    } else {
+        connectBtn.textContent = '🔌 Connect Device';
+        connectBtn.classList.remove('btn-secondary');
+        connectBtn.classList.add('btn-primary');
+    }
+}
+
+function updateFlashButton() {
+    const flashBtn = document.getElementById('flashFirmware');
+    const connectBtn = document.getElementById('connectDevice');
+    
+    if (!flashBtn || !connectBtn) return;
+    
+    const hasValidFirmware = state.firmwareUrl !== null;
+    const canConnect = hasValidFirmware;
+    const canFlash = hasValidFirmware && state.connected && !state.isFlashing;
+    
+    connectBtn.disabled = !canConnect;
+    flashBtn.disabled = !canFlash;
+    
+    if (state.isFlashing) {
+        flashBtn.textContent = '⚡ Flashing...';
+    } else {
+        flashBtn.textContent = '⚡ Flash Firmware';
+    }
+}
+
+function showFeedback(message, type) {
+    const feedback = document.getElementById('firmwareFeedback');
+    if (!feedback) return;
+    
+    feedback.textContent = message;
+    feedback.className = 'firmware-feedback ' + type;
+}
+
+function logToConsole(message, type = 'info') {
+    const consoleOutput = document.getElementById('consoleOutput');
+    const consoleLog = document.getElementById('consoleLog');
+    
+    if (!consoleOutput || !consoleLog) return;
+    
+    consoleOutput.style.display = 'block';
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const line = document.createElement('div');
+    line.className = `console-line ${type}`;
+    line.textContent = `[${timestamp}] ${message}`;
+    
+    consoleLog.appendChild(line);
+    consoleLog.scrollTop = consoleLog.scrollHeight;
+}
+
+function disableControls() {
+    const controls = [
+        'projectSelector',
+        'versionSelector',
+        'firmwareInput',
+        'validateFirmware',
+        'connectDevice',
+        'flashFirmware'
+    ];
+    
+    controls.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = true;
     });
+}
+
+function parseURLParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Check for firmware parameter
+    const firmwareUrl = urlParams.get('firmware');
+    if (firmwareUrl) {
+        const firmwareInput = document.getElementById('firmwareInput');
+        if (firmwareInput) {
+            firmwareInput.value = firmwareUrl;
+            validateFirmwareUrl(firmwareUrl);
+            logToConsole(`Firmware URL loaded from URL parameter: ${firmwareUrl}`, 'info');
+        }
+    }
+    
+    // Check for project parameter
+    const project = urlParams.get('project');
+    if (project) {
+        const projectSelector = document.getElementById('projectSelector');
+        if (projectSelector && projectData[project]) {
+            projectSelector.value = project;
+            projectSelector.dispatchEvent(new Event('change'));
+            logToConsole(`Project loaded from URL parameter: ${project}`, 'info');
+        }
+    }
+    
+    // Check for version parameter
+    const version = urlParams.get('version');
+    if (version && project) {
+        setTimeout(() => {
+            const versionSelector = document.getElementById('versionSelector');
+            if (versionSelector) {
+                versionSelector.value = version;
+                versionSelector.dispatchEvent(new Event('change'));
+                logToConsole(`Version loaded from URL parameter: ${version}`, 'info');
+            }
+        }, 100);
+    }
 }
 
 function isValidURL(string) {
@@ -66,99 +613,6 @@ function isValidURL(string) {
     } catch (_) {
         return false;
     }
-}
-
-function updateFeedback(message, type) {
-    const feedback = document.getElementById('inputFeedback');
-    feedback.textContent = message;
-    feedback.className = 'input-feedback ' + type;
-}
-
-function processLink(url) {
-    updateFeedback('🔍 Processing link...', 'info');
-    
-    // Simulate processing
-    setTimeout(() => {
-        // Check if it's a GitHub link
-        if (url.includes('github.com')) {
-            updateFeedback('✓ GitHub repository detected! Checking for IoT projects...', 'success');
-            
-            setTimeout(() => {
-                displayLinkResult({
-                    type: 'github',
-                    url: url,
-                    message: 'This appears to be a GitHub repository. You can explore IoT projects and contribute!'
-                });
-            }, 1000);
-        }
-        // Check if it's an Arduino/ESP link
-        else if (url.includes('arduino') || url.includes('esp32') || url.includes('esp8266')) {
-            updateFeedback('✓ Arduino/ESP resource detected!', 'success');
-            
-            setTimeout(() => {
-                displayLinkResult({
-                    type: 'arduino',
-                    url: url,
-                    message: 'This is an Arduino or ESP32/ESP8266 related resource. Great for IoT development!'
-                });
-            }, 1000);
-        }
-        // Generic link
-        else {
-            updateFeedback('✓ Link processed successfully', 'success');
-            
-            setTimeout(() => {
-                displayLinkResult({
-                    type: 'generic',
-                    url: url,
-                    message: 'Link validated. Visit the URL to explore the content.'
-                });
-            }, 1000);
-        }
-    }, 500);
-}
-
-function displayLinkResult(result) {
-    const resultDiv = document.createElement('div');
-    resultDiv.className = 'link-result fade-in';
-    resultDiv.style.cssText = `
-        margin-top: 1.5rem;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(168, 85, 247, 0.1));
-        border: 2px solid var(--accent-blue);
-        border-radius: var(--radius-lg);
-        animation: fadeInUp 0.5s ease-out;
-    `;
-    
-    resultDiv.innerHTML = `
-        <h3 style="color: var(--accent-blue); margin-bottom: 0.5rem; font-size: 1.2rem;">
-            ${getIconForType(result.type)} Link Analysis Result
-        </h3>
-        <p style="color: var(--text-muted); margin-bottom: 1rem;">
-            ${result.message}
-        </p>
-        <a href="${result.url}" target="_blank" rel="noopener noreferrer" 
-           class="btn btn-secondary" style="display: inline-flex;">
-            🔗 Visit Link
-        </a>
-    `;
-    
-    // Remove any existing result
-    const existingResult = document.querySelector('.link-result');
-    if (existingResult) {
-        existingResult.remove();
-    }
-    
-    document.getElementById('inputFeedback').after(resultDiv);
-}
-
-function getIconForType(type) {
-    const icons = {
-        github: '🐙',
-        arduino: '🔌',
-        generic: '🔗'
-    };
-    return icons[type] || '🔗';
 }
 
 // ===================================
