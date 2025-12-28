@@ -27,6 +27,11 @@ let state = {
 // Project definitions with versions
 // NOTE: Firmware URLs point to official releases in this repository
 // Users can also enter custom firmware URLs via the input field
+// 
+// PRODUCTION RECOMMENDATION: Load this data dynamically from:
+// - A JSON configuration file (e.g., projects-config.json)
+// - An API endpoint that can be updated without code deployment
+// - A CMS or database for easier content management
 const projectData = {
     esp32: {
         name: 'ESP32 Generic',
@@ -265,6 +270,13 @@ function validateFirmwareUrl(url) {
         return false;
     }
     
+    // File extension validation
+    // NOTE: Different platforms use different firmware formats:
+    // - ESP32/ESP8266: .bin
+    // - Raspberry Pi Pico (RP2040): .uf2
+    // - Arduino: .hex
+    // - Some platforms: .elf
+    // PRODUCTION RECOMMENDATION: Make extensions configurable per project type
     const validExtensions = ['.bin', '.uf2', '.hex', '.elf'];
     const hasValidExtension = validExtensions.some(ext => url.toLowerCase().endsWith(ext));
     
@@ -333,12 +345,24 @@ async function disconnectDevice() {
     }
 }
 
+/**
+ * Detects device information from connected serial port
+ * 
+ * NOTE: This is a STUB for demonstration purposes
+ * In production, implement actual device detection using:
+ * - esptool-js for ESP32/ESP8266 (reads chip ID, MAC, flash size)
+ * - Device-specific protocols for other platforms
+ * - USB device descriptors for initial identification
+ * 
+ * @returns {Promise<Object>} Device information object
+ */
 async function detectDeviceInfo() {
-    // Simplified device detection - in production, use esptool-js
+    // STUB: Returns placeholder values for UI demonstration
+    // TODO: Replace with actual device detection logic
     const deviceInfo = {
         chipType: state.selectedProject ? projectData[state.selectedProject]?.chipFamily : 'Unknown',
-        macAddress: 'N/A',
-        flashSize: 'N/A'
+        macAddress: 'N/A (detection not implemented)',
+        flashSize: 'N/A (detection not implemented)'
     };
     
     state.device = deviceInfo;
