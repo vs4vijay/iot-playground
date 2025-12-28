@@ -28,6 +28,10 @@ https://vs4vijay.github.io/iot-playground/
 - ESP Web Tools is loaded from the unpkg CDN
 - Manifest files point to firmware binaries hosted in GitHub Releases
 
+## Firmware Versions
+
+Each project's manifest file points to the latest available compiled binary from GitHub Releases. Note that some projects may reference different release tags if their binaries were updated independently. This is normal and ensures users always get the most recent stable version for each project.
+
 ## Manual Deployment
 
 The workflow can also be triggered manually:
@@ -58,3 +62,10 @@ Then open `http://localhost:8000` in Chrome or Edge browser.
 - **HTTPS Required**: GitHub Pages automatically provides HTTPS, which is required for Web Serial API
 - **USB Drivers**: Ensure proper USB/serial drivers (CP210x, CH340) are installed on the user's system
 - **Firmware URLs**: Verify that the firmware URLs in manifest files point to valid GitHub Release assets
+
+## Updating Firmware Versions
+
+When new firmware is released:
+1. Update the corresponding manifest file in `docs/firmware/` with the new release tag and binary URL
+2. Update the HTML page with the new version number (if desired)
+3. Commit and push changes - the workflow will automatically deploy
