@@ -333,6 +333,8 @@ function fallbackCopyToClipboard(text) {
     textArea.select();
     
     try {
+        // Note: document.execCommand is deprecated but used here as fallback for older browsers
+        // that don't support the modern navigator.clipboard API
         document.execCommand('copy');
         showNotification('✓ Copied to clipboard!');
     } catch (err) {

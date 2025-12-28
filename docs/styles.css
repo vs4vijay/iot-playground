@@ -138,6 +138,7 @@ header {
 .logo {
     font-size: 1.5rem;
     font-weight: 700;
+    color: var(--accent-blue); /* Fallback for non-webkit browsers */
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -204,6 +205,7 @@ nav a:hover::after {
     font-size: clamp(2.5rem, 8vw, 4.5rem);
     font-weight: 800;
     margin-bottom: var(--spacing-md);
+    color: var(--accent-blue); /* Fallback for non-webkit browsers */
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -329,6 +331,18 @@ nav a:hover::after {
     color: var(--text-muted);
 }
 
+.link-input::-webkit-input-placeholder {
+    color: var(--text-muted);
+}
+
+.link-input::-moz-placeholder {
+    color: var(--text-muted);
+}
+
+.link-input:-ms-input-placeholder {
+    color: var(--text-muted);
+}
+
 .input-feedback {
     min-height: 24px;
     font-size: 0.9rem;
@@ -360,6 +374,7 @@ nav a:hover::after {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: var(--spacing-xs);
+    color: var(--accent-blue); /* Fallback for non-webkit browsers */
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -415,6 +430,7 @@ nav a:hover::after {
 .feature-icon {
     font-size: 3rem;
     margin-bottom: var(--spacing-md);
+    color: var(--accent-blue); /* Fallback for non-webkit browsers */
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
