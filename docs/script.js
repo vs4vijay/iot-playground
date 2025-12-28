@@ -215,6 +215,8 @@ function initSmoothScroll() {
 // ===================================
 
 function createParticles() {
+    const PARTICLE_DENSITY_FACTOR = 15000; // Controls particle density based on canvas size
+    
     const canvas = document.createElement('canvas');
     canvas.id = 'particles';
     canvas.style.position = 'fixed';
@@ -266,7 +268,7 @@ function createParticles() {
     
     function init() {
         particles = [];
-        const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+        const particleCount = Math.floor((canvas.width * canvas.height) / PARTICLE_DENSITY_FACTOR);
         for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
         }
