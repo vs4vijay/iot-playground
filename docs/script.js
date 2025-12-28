@@ -77,6 +77,9 @@ const projectData = {
         name: 'Raspberry Pi Pico',
         chipFamily: 'RP2040',
         versions: [
+            // NOTE: MicroPython URLs - verify these point to official sources
+            // Production recommendation: Use official MicroPython download URLs
+            // and keep them updated with latest releases
             { id: 'latest', name: 'MicroPython Latest', date: '2024-01-20', description: 'Latest MicroPython firmware', url: 'https://micropython.org/download/rp2-pico/rp2-pico-latest.uf2' },
             { id: 'v1.22.0', name: 'MicroPython v1.22.0', date: '2023-12-15', description: 'Stable MicroPython release' }
         ]
@@ -282,8 +285,14 @@ function validateFirmwareUrl(url) {
     // - Arduino: .hex
     // - Some platforms: .elf
     // PRODUCTION RECOMMENDATION: Make extensions configurable per project type
+    
+    // Extract actual file extension (last occurrence after final dot)
+    const urlPath = url.split('?')[0]; // Remove query parameters
+    const lastDotIndex = urlPath.lastIndexOf('.');
+    const extension = lastDotIndex !== -1 ? urlPath.substring(lastDotIndex).toLowerCase() : '';
+    
     const validExtensions = ['.bin', '.uf2', '.hex', '.elf'];
-    const hasValidExtension = validExtensions.some(ext => url.toLowerCase().endsWith(ext));
+    const hasValidExtension = validExtensions.includes(extension);
     
     if (!hasValidExtension) {
         showFeedback('⚠️ Invalid firmware file. Expected .bin, .uf2, .hex, or .elf file', 'error');
@@ -378,12 +387,27 @@ function displayDeviceInfo(info) {
     const deviceInfoDiv = document.getElementById('deviceInfo');
     if (!deviceInfoDiv) return;
     
-    deviceInfoDiv.innerHTML = `
-        <h4>📱 Device Information</h4>
-        <p><strong>Chip Type:</strong> ${info.chipType}</p>
-        <p><strong>MAC Address:</strong> ${info.macAddress}</p>
-        <p><strong>Flash Size:</strong> ${info.flashSize}</p>
-    `;
+    // Create element and set text content (not innerHTML) for security
+    const h4 = document.createElement('h4');
+    h4.textContent = '📱 Device Information';
+    
+    const p1 = document.createElement('p');
+    p1.innerHTML = '<strong>Chip Type:</strong> ';
+    p1.appendChild(document.createTextNode(info.chipType));
+    
+    const p2 = document.createElement('p');
+    p2.innerHTML = '<strong>MAC Address:</strong> ';
+    p2.appendChild(document.createTextNode(info.macAddress));
+    
+    const p3 = document.createElement('p');
+    p3.innerHTML = '<strong>Flash Size:</strong> ';
+    p3.appendChild(document.createTextNode(info.flashSize));
+    
+    deviceInfoDiv.innerHTML = '';
+    deviceInfoDiv.appendChild(h4);
+    deviceInfoDiv.appendChild(p1);
+    deviceInfoDiv.appendChild(p2);
+    deviceInfoDiv.appendChild(p3);
     deviceInfoDiv.style.display = 'block';
 }
 
@@ -407,15 +431,18 @@ async function flashFirmware() {
     // - Display of firmware checksum/hash if available
     // - Better visual hierarchy and styling
     // - "I understand the risks" checkbox
-    const deviceType = state.device?.chipType || 'Unknown';
-    const fileName = state.firmwareUrl.split('/').pop();
+    
+    // Sanitize display values to prevent any potential issues
+    const deviceType = (state.device?.chipType || 'Unknown').replace(/[<>&"']/g, '');
+    const fileName = state.firmwareUrl.split('/').pop().replace(/[<>&"']/g, '');
+    const urlHostname = new URL(state.firmwareUrl).hostname;
     
     const confirmed = confirm(
         `⚠️ FIRMWARE FLASH CONFIRMATION\n\n` +
         `This will ERASE ALL DATA on your device and install new firmware.\n\n` +
         `Device: ${deviceType}\n` +
         `Firmware: ${fileName}\n` +
-        `Source: ${state.firmwareUrl}\n\n` +
+        `Source: ${urlHostname}\n\n` +
         `IMPORTANT WARNINGS:\n` +
         `• All existing data will be permanently deleted\n` +
         `• Only flash firmware from trusted sources\n` +
