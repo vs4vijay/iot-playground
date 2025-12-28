@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash M5CardRemote - M5Cardputer | IoT Playground</title>
+    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); padding: 40px; }
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { color: #667eea; font-size: 2rem; margin-bottom: 10px; }
+        .subtitle { color: #666; font-size: 1rem; }
+        .back-link { display: inline-block; color: #667eea; text-decoration: none; margin-bottom: 20px; font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+        .description { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #667eea; }
+        .flash-section { text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin: 30px 0; }
+        .flash-section h2 { margin-bottom: 20px; color: #333; }
+        esp-web-install-button { margin: 20px 0; }
+        .instructions { background: #e7f3ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2196F3; }
+        .instructions h3 { color: #1976D2; margin-bottom: 15px; }
+        .instructions ol { margin-left: 20px; }
+        .instructions li { margin: 10px 0; }
+        .info { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; }
+        footer { margin-top: 40px; text-align: center; color: #666; padding-top: 20px; border-top: 1px solid #e9ecef; }
+        footer a { color: #667eea; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="./" class="back-link">← Back to Projects</a>
+        <header>
+            <h1>📱 M5CardRemote - M5Cardputer</h1>
+            <p class="subtitle">IR Remote Control Application</p>
+        </header>
+        <div class="description">
+            <h3>About this firmware</h3>
+            <p>M5CardRemote is an IR remote control application for M5Stack Cardputer that allows you to control various infrared devices.</p>
+            <p style="margin-top: 10px;"><strong>Device:</strong> M5Stack Cardputer (ESP32-S3)<br><strong>Version:</strong> 6f63e83</p>
+        </div>
+        <div class="flash-section">
+            <h2>Flash Firmware to Device</h2>
+            <esp-web-install-button manifest="./firmware/m5cardremote-manifest.json"></esp-web-install-button>
+        </div>
+        <div class="instructions">
+            <h3>📋 Instructions</h3>
+            <ol>
+                <li>Connect your M5Cardputer to your computer via USB cable</li>
+                <li>Click the "CONNECT" button above</li>
+                <li>Select your device from the popup</li>
+                <li>Click "INSTALL" and wait for the flashing process to complete</li>
+                <li>Once complete, your device will reboot with the new firmware</li>
+            </ol>
+        </div>
+        <div class="info"><strong>⚠️ Note:</strong> This will erase all existing data on your device. Chrome or Edge browser required.</div>
+        <footer>
+            <p><a href="https://github.com/vs4vijay/iot-playground" target="_blank">View on GitHub</a> | <a href="https://github.com/vs4vijay/iot-playground/releases/tag/6f63e83" target="_blank">Release Notes</a></p>
+        </footer>
+    </div>
+</body>
+</html>
