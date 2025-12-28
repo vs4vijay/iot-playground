@@ -1,0 +1,17 @@
+{
+  "name": "M5Cardputer UserDemo",
+  "version": "6f63e83",
+  "home_assistant_domain": "esphome",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "https://github.com/vs4vijay/iot-playground/releases/download/6f63e83/UserDemo-6f63e83.M5Cardputer.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}

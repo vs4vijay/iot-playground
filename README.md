@@ -2,10 +2,40 @@
 
 A firmware playground for IoT Devices like ESP32, Arduino, M5Stack, etc.
 
+## 🔌 Web Flasher - Flash from Browser
+
+**No installation required!** Flash pre-compiled firmware directly from your browser using our web flasher:
+
+🌐 **[https://vs4vijay.github.io/iot-playground/](https://vs4vijay.github.io/iot-playground/)**
+
+### Available Projects
+
+#### M5Stack Cardputer (ESP32-S3)
+- **[UserDemo](https://vs4vijay.github.io/iot-playground/flash-userdemo-cardputer.html)** - Official M5Stack Cardputer user demo
+- **[M5CardRemote](https://vs4vijay.github.io/iot-playground/flash-m5cardremote.html)** - IR remote control application
+- **[GameBoy Emulator](https://vs4vijay.github.io/iot-playground/flash-gameboy.html)** - GameBoy emulator with ROM support
+- **[Resistor Calculator](https://vs4vijay.github.io/iot-playground/flash-resistor.html)** - Resistor color code calculator
+- **[M5Stick Launcher](https://vs4vijay.github.io/iot-playground/flash-m5launcher.html)** - Application launcher system
+- **[Evil Cardputer](https://vs4vijay.github.io/iot-playground/flash-evil-cardputer.html)** - WiFi security testing tool
+
+#### M5StickC Plus2 (ESP32-S3)
+- **[UserDemo](https://vs4vijay.github.io/iot-playground/flash-userdemo-stickc.html)** - Official M5StickC Plus2 user demo
+- **[OneButton](https://vs4vijay.github.io/iot-playground/flash-onebutton.html)** - OneButton library example
+- **[Evil Clock](https://vs4vijay.github.io/iot-playground/flash-evilclock.html)** - WiFi deauth clock
+
+### Requirements
+- Chrome or Edge browser (Web Serial API required)
+- USB cable to connect your device
+- USB/Serial drivers installed (CP210x, CH340, etc.)
+
+### Direct Binary Downloads
+Latest compiled binaries are available in the [Releases](https://github.com/vs4vijay/iot-playground/releases/latest) section.
+
+---
+
+## 📦 Development Setup
 
 - Update subomdules using `scripts/update-submodules.sh` script
-
-
 
 ---
 
@@ -145,12 +175,26 @@ cargo build --release
 
 ---
 
-## Flash firmware
+## Flash Firmware
 
-- Install esptool.py - `pip install -U esptool`
+### Option 1: Web Flasher (Recommended - No Installation)
+
+Use our browser-based web flasher for the easiest flashing experience:
+- **Web Flasher:** [https://vs4vijay.github.io/iot-playground/](https://vs4vijay.github.io/iot-playground/)
+- No software installation required
+- Works on Chrome/Edge browsers
+- One-click flashing for all pre-compiled projects
+
+### Option 2: Command Line (esptool.py)
+
+For manual flashing or custom builds:
 
 ```bash
-esptool write_flash -z 0 name.bin
+# Install esptool.py
+pip install -U esptool
+
+# Flash firmware
+esptool.py write_flash 0x0 firmware.bin
 ```
 
 ## QEMU Emulation

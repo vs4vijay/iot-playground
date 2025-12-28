@@ -1,0 +1,17 @@
+{
+  "name": "Evil Cardputer",
+  "version": "6f63e83",
+  "home_assistant_domain": "esphome",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "https://github.com/vs4vijay/iot-playground/releases/download/7ce0bc0/Evil-Cardputer-7ce0bc0.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
