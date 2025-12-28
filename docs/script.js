@@ -244,6 +244,27 @@ function validateFirmwareUrl(url) {
         return false;
     }
     
+    // Check for HTTPS (recommended for security)
+    try {
+        const urlObj = new URL(url);
+        if (urlObj.protocol !== 'https:' && urlObj.protocol !== 'http:') {
+            showFeedback('⚠️ Only HTTP/HTTPS URLs are supported', 'error');
+            state.firmwareUrl = null;
+            updateFlashButton();
+            return false;
+        }
+        
+        // Warn if using HTTP instead of HTTPS
+        if (urlObj.protocol === 'http:') {
+            logToConsole('⚠️ Warning: Using unencrypted HTTP connection. HTTPS is recommended for security.', 'warning');
+        }
+    } catch (e) {
+        showFeedback('⚠️ Invalid URL format', 'error');
+        state.firmwareUrl = null;
+        updateFlashButton();
+        return false;
+    }
+    
     const validExtensions = ['.bin', '.uf2', '.hex', '.elf'];
     const hasValidExtension = validExtensions.some(ext => url.toLowerCase().endsWith(ext));
     
@@ -351,6 +372,12 @@ async function flashFirmware() {
     }
     
     // Enhanced confirmation dialog with clear warnings
+    // NOTE: Using native confirm() for simplicity in this demo
+    // For production, implement a custom modal with:
+    // - Checkbox confirmations for each safety step
+    // - Display of firmware checksum/hash if available
+    // - Better visual hierarchy and styling
+    // - "I understand the risks" checkbox
     const deviceType = state.device?.chipType || 'Unknown';
     const fileName = state.firmwareUrl.split('/').pop();
     
