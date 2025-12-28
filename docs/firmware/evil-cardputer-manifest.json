@@ -1,6 +1,6 @@
 {
   "name": "Evil Cardputer",
-  "version": "6f63e83",
+  "version": "7ce0bc0",
   "home_assistant_domain": "esphome",
   "new_install_prompt_erase": true,
   "builds": [
