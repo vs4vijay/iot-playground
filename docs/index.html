@@ -3,260 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IoT Playground - Web Flasher</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        h1 {
-            color: #667eea;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-
-        .description {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 4px solid #667eea;
-        }
-
-        .requirements {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 4px solid #ffc107;
-        }
-
-        .requirements h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .requirements ul {
-            margin-left: 20px;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .device-section {
-            margin-bottom: 40px;
-        }
-
-        .device-section h2 {
-            color: #764ba2;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .project-card {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .project-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .project-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .project-card p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
-
-        .flash-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .flash-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #666;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            margin-left: 10px;
-        }
-    </style>
+    <meta name="description" content="IoT Playground - Flash ESP32 firmware to M5Stack and IoT devices directly from your browser. No installation required.">
+    <meta name="keywords" content="IoT, ESP32, M5Stack, firmware, web flasher, Arduino, embedded systems">
+    <meta name="author" content="IoT Playground">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="IoT Playground - Modern Web Flasher for ESP32 Devices">
+    <meta property="og:description" content="Flash pre-compiled firmware to your ESP32-based devices directly from your browser. No installation required!">
+    <meta property="og:url" content="https://vs4vijay.github.io/iot-playground/">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IoT Playground - Web Flasher">
+    <meta name="twitter:description" content="Flash ESP32 firmware directly from your browser">
+    
+    <title>IoT Playground - Modern Web Flasher for ESP32 & IoT Devices</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🔌 IoT Playground Web Flasher</h1>
-            <p class="subtitle">Flash ESP32 firmware directly from your browser</p>
-        </header>
-
-        <div class="description">
-            <p>
-                Welcome to the IoT Playground Web Flasher! This tool allows you to flash pre-compiled firmware 
-                to your ESP32-based devices (M5Stack Cardputer, M5StickC Plus2) directly from your web browser 
-                using ESP Web Tools. No installation required!
+    <!-- Animated Background -->
+    <div class="background-animation"></div>
+    <div class="grid-overlay"></div>
+    
+    <!-- Header/Navigation -->
+    <header>
+        <div class="container">
+            <nav class="nav-container">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    IoT Playground
+                </div>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="https://github.com/vs4vijay/iot-playground" target="_blank">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>⚡ IoT Playground</h1>
+            <p class="subtitle">Next-Generation Web Flasher for ESP32 & IoT Devices</p>
+            <p class="hero-description">
+                Flash pre-compiled firmware to your ESP32-based devices (M5Stack Cardputer, M5StickC Plus2) 
+                directly from your web browser using cutting-edge Web Serial API. 
+                Zero installation. Maximum productivity.
             </p>
+            <div class="cta-buttons">
+                <a href="#projects" class="btn btn-primary">
+                    🚀 Get Started
+                </a>
+                <a href="https://github.com/vs4vijay/iot-playground" target="_blank" class="btn btn-secondary">
+                    📚 Documentation
+                </a>
+            </div>
         </div>
-
-        <div class="requirements">
-            <h3>⚠️ Requirements</h3>
-            <ul>
-                <li>Chrome or Edge browser (Web Serial API required)</li>
-                <li>USB cable to connect your device</li>
-                <li>USB/Serial drivers installed (CP210x, CH340, etc.)</li>
-            </ul>
+    </section>
+    
+    <!-- Link Input Section -->
+    <section class="link-input-section">
+        <div class="container">
+            <div class="link-input-container">
+                <h2>🔗 Link Analyzer</h2>
+                <p>Enter any GitHub, Arduino, or IoT-related link to analyze and explore</p>
+                <div class="input-group">
+                    <input 
+                        type="url" 
+                        id="linkInput" 
+                        class="link-input" 
+                        placeholder="https://github.com/example/iot-project"
+                        aria-label="Enter URL to analyze"
+                    >
+                    <button id="submitLink" class="btn btn-primary">
+                        🔍 Analyze
+                    </button>
+                </div>
+                <div id="inputFeedback" class="input-feedback"></div>
+            </div>
         </div>
-
-        <div class="device-section">
-            <h2>📱 M5Stack Cardputer <span class="badge">ESP32-S3</span></h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <h3>User Demo</h3>
-                    <p>Official M5Stack Cardputer user demo with multiple features and examples.</p>
-                    <a href="./flash-userdemo-cardputer.html" class="flash-button">Flash Firmware</a>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">✨ Key Features</h2>
+            <p class="section-subtitle">Everything you need for efficient IoT development</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Browser-Based Flashing</h3>
+                    <p>Flash firmware directly from your browser using Web Serial API. No software installation required.</p>
                 </div>
-
-                <div class="project-card">
-                    <h3>M5Card Remote</h3>
-                    <p>IR remote control application for M5Stack Cardputer.</p>
-                    <a href="./flash-m5cardremote.html" class="flash-button">Flash Firmware</a>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Optimized flashing process that gets your devices up and running in seconds.</p>
                 </div>
-
-                <div class="project-card">
-                    <h3>GameBoy Emulator</h3>
-                    <p>GameBoy emulator for M5Stack Cardputer with ROM support.</p>
-                    <a href="./flash-gameboy.html" class="flash-button">Flash Firmware</a>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure & Safe</h3>
+                    <p>All operations happen locally in your browser. Your data never leaves your machine.</p>
                 </div>
-
-                <div class="project-card">
-                    <h3>Resistor Calculator</h3>
-                    <p>Resistor color code calculator and reference tool.</p>
-                    <a href="./flash-resistor.html" class="flash-button">Flash Firmware</a>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Multi-Device Support</h3>
+                    <p>Support for M5Stack Cardputer, M5StickC Plus2, and other ESP32-based devices.</p>
                 </div>
-
-                <div class="project-card">
-                    <h3>M5Stick Launcher</h3>
-                    <p>Application launcher and management system.</p>
-                    <a href="./flash-m5launcher.html" class="flash-button">Flash Firmware</a>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Modern Interface</h3>
+                    <p>Beautiful, intuitive UI designed for the best user experience across all devices.</p>
                 </div>
-
-                <div class="project-card">
-                    <h3>Evil Cardputer</h3>
-                    <p>Security testing and WiFi analysis tool.</p>
-                    <a href="./flash-evil-cardputer.html" class="flash-button">Flash Firmware</a>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Pre-compiled Firmware</h3>
+                    <p>Ready-to-flash firmware binaries for popular IoT projects and applications.</p>
                 </div>
             </div>
         </div>
-
-        <div class="device-section">
-            <h2>⌚ M5StickC Plus2 <span class="badge">ESP32-S3</span></h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <h3>User Demo</h3>
-                    <p>Official M5StickC Plus2 user demo with multiple features and examples.</p>
-                    <a href="./flash-userdemo-stickc.html" class="flash-button">Flash Firmware</a>
+    </section>
+    
+    <!-- Requirements Section -->
+    <section class="requirements-section">
+        <div class="container">
+            <div class="requirements-box">
+                <h3>⚠️ System Requirements</h3>
+                <ul>
+                    <li>Chrome or Edge browser (Web Serial API required)</li>
+                    <li>USB cable to connect your ESP32 device</li>
+                    <li>USB/Serial drivers installed (CP210x, CH340, FTDI, etc.)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <h2 class="section-title">🎯 Available Projects</h2>
+            <p class="section-subtitle">Choose from our collection of pre-compiled firmware</p>
+            
+            <!-- M5Stack Cardputer Projects -->
+            <div class="device-category">
+                <div class="device-header">
+                    <h2>📱 M5Stack Cardputer</h2>
+                    <span class="device-badge">ESP32-S3</span>
                 </div>
-
-                <div class="project-card">
-                    <h3>OneButton</h3>
-                    <p>Simple OneButton library example for M5StickC Plus2.</p>
-                    <a href="./flash-onebutton.html" class="flash-button">Flash Firmware</a>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <h3>👤 User Demo</h3>
+                        <p>Official M5Stack Cardputer user demo with multiple features and examples including sensors, display, and keyboard input.</p>
+                        <a href="./flash-userdemo-cardputer.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>📡 M5Card Remote</h3>
+                        <p>Infrared remote control application for M5Stack Cardputer. Control TVs, air conditioners, and other IR devices.</p>
+                        <a href="./flash-m5cardremote.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>🎮 GameBoy Emulator</h3>
+                        <p>Full-featured GameBoy emulator for M5Stack Cardputer with ROM loading support and save states.</p>
+                        <a href="./flash-gameboy.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>🔧 Resistor Calculator</h3>
+                        <p>Interactive resistor color code calculator and electronics reference tool for makers and engineers.</p>
+                        <a href="./flash-resistor.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>🚀 M5Stick Launcher</h3>
+                        <p>Advanced application launcher and management system for organizing multiple projects.</p>
+                        <a href="./flash-m5launcher.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>🔐 Evil Cardputer</h3>
+                        <p>WiFi security testing and network analysis tool for penetration testing and security research.</p>
+                        <a href="./flash-evil-cardputer.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
                 </div>
-
-                <div class="project-card">
-                    <h3>Evil Clock</h3>
-                    <p>WiFi deauth clock and security testing tool.</p>
-                    <a href="./flash-evilclock.html" class="flash-button">Flash Firmware</a>
+            </div>
+            
+            <!-- M5StickC Plus2 Projects -->
+            <div class="device-category">
+                <div class="device-header">
+                    <h2>⌚ M5StickC Plus2</h2>
+                    <span class="device-badge">ESP32-S3</span>
+                </div>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <h3>👤 User Demo</h3>
+                        <p>Official M5StickC Plus2 user demo with multiple features, sensors, and display examples.</p>
+                        <a href="./flash-userdemo-stickc.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>🔘 OneButton</h3>
+                        <p>Simple OneButton library demonstration showing advanced button interaction patterns and events.</p>
+                        <a href="./flash-onebutton.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>⏰ Evil Clock</h3>
+                        <p>WiFi deauth clock and security testing tool for network monitoring and penetration testing.</p>
+                        <a href="./flash-evilclock.html" class="flash-button">
+                            ⚡ Flash Firmware
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <footer>
-            <p>
-                Built with ❤️ using <a href="https://esphome.github.io/esp-web-tools/" target="_blank">ESP Web Tools</a>
-                | <a href="https://github.com/vs4vijay/iot-playground" target="_blank">View on GitHub</a>
-            </p>
-            <p style="margin-top: 10px; font-size: 0.9rem;">
-                Latest Release: <a href="https://github.com/vs4vijay/iot-playground/releases/latest" target="_blank">6f63e83</a>
-            </p>
-        </footer>
-    </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://github.com/vs4vijay/iot-playground" target="_blank" rel="noopener noreferrer">
+                        🐙 GitHub Repository
+                    </a>
+                    <a href="https://github.com/vs4vijay/iot-playground/releases/latest" target="_blank" rel="noopener noreferrer">
+                        📦 Latest Release
+                    </a>
+                    <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener noreferrer">
+                        🔧 ESP Web Tools
+                    </a>
+                </div>
+                <p class="footer-credits">
+                    Built with ❤️ for the IoT community | 
+                    Powered by Web Serial API & ESP32
+                </p>
+                <p class="footer-credits" style="margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.7;">
+                    © 2025 IoT Playground | Open Source Project
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="./script.js"></script>
 </body>
 </html>
