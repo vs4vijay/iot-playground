@@ -9,12 +9,12 @@ on:
     tags:
       - "*"
     paths-ignore:
-      - "**. yml"
+      - "**.yml"
   pull_request:
     branches:
       - main
     paths-ignore:
-      - "**. yml"
+      - "**.yml"
 
 permissions:
   contents: write
