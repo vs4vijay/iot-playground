@@ -8,9 +8,13 @@ on:
       - main
     tags:
       - "*"
+    paths-ignore:
+      - "**. yml"
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "**. yml"
 
 permissions:
   contents: write
