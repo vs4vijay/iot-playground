@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 esp-idf-sys = "0.36.0"
 esp-idf-hal = "0.25.0"
-esp-idf-svc = "0.25.0"
+esp-idf-svc = "0.51.0"
 esp-idf = "0.25.0"
 log = "0.4"
 anyhow = "1.0"
