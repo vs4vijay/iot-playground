@@ -58,7 +58,7 @@ jobs:
       # TODO: Validate
         
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: .pio/build/esp32dev/firmware.bin
           name: demo.pio
