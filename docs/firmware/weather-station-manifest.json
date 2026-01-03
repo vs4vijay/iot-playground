@@ -1,0 +1,17 @@
+{
+  "name": "Weather Micro Station",
+  "version": "6f63e83",
+  "home_assistant_domain": "esphome",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "https://github.com/vs4vijay/iot-playground/releases/download/6f63e83/WeatherStation-6f63e83.LilyGoTDisplay.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}

@@ -25,3 +25,6 @@
 [submodule "Evil-M5Core2"]
 	path = Evil-M5Core2
 	url = https://github.com/7h30th3r0n3/Evil-M5Core2
+[submodule "weather-micro-station"]
+	path = weather-micro-station
+	url = https://github.com/sfrechette/weather-micro-station

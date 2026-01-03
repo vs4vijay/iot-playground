@@ -23,6 +23,9 @@ A firmware playground for IoT Devices like ESP32, Arduino, M5Stack, etc.
 - **[OneButton](https://vs4vijay.github.io/iot-playground/flash-onebutton.html)** - OneButton library example
 - **[Evil Clock](https://vs4vijay.github.io/iot-playground/flash-evilclock.html)** - WiFi deauth clock
 
+#### LilyGo T-Display S3 (ESP32-S3)
+- **[Weather Micro Station](https://vs4vijay.github.io/iot-playground/flash-weather-station.html)** - Real-time weather display with OpenWeatherMap API
+
 ### Requirements
 - Chrome or Edge browser (Web Serial API required)
 - USB cable to connect your device
