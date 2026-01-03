@@ -792,6 +792,108 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+  compile_weather_station_lilygo_t_display:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive --force --remote
+
+      - id: version
+        name: Get Version
+        run: |
+          set -x
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version=${{ github.ref_name }}
+          else
+            version="${GITHUB_SHA::7}"
+          fi
+
+          echo "version=${version}" > $GITHUB_OUTPUT
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.9"
+
+      - name: Install esptool
+        run: pip install -U esptool
+
+      - name: Install PlatformIO core
+        run: pip install -U platformio
+
+      - name: Create secrets.h file
+        working-directory: weather-micro-station
+        run: |
+          set -x
+          # Create a dummy secrets.h file for compilation
+          cat > include/secrets.h << 'EOF'
+          #ifndef SECRETS_H
+          #define SECRETS_H
+          #define OPENWEATHERMAP_API_KEY "your_api_key_here"
+          #define WIFI_SSID "your_wifi_network"
+          #define WIFI_PASSWORD "your_wifi_password"
+          #define OPENWEATHERMAP_CITY "London"
+          #endif
+          EOF
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: weather-micro-station
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
+      - name: Compile using PlatformIO
+        working-directory: weather-micro-station
+        run: |
+          set -x
+          cat platformio.ini
+          pio run
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: weather-micro-station
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
+      - name: Move firmware binary
+        continue-on-error: true
+        working-directory: weather-micro-station
+        run: |
+          set -x
+          cp .pio/build/lilygo-t-display-s3/firmware.bin WeatherStation-${{ steps.version.outputs.version }}.LilyGoTDisplay.bin
+
+      - name: List all files
+        if: always()
+        continue-on-error: true
+        working-directory: weather-micro-station
+        run: |
+          set -x
+          pwd
+          ls -all
+          tree
+
+      - name: Upload Weather Station firmware
+        uses: actions/upload-artifact@v6
+        with:
+          path: weather-micro-station/WeatherStation-${{ steps.version.outputs.version }}.LilyGoTDisplay.bin
+          name: WeatherStation.LilyGoTDisplay
+          compression-level: 0
+          if-no-files-found: error
+
   create_release:
     runs-on: ubuntu-latest
     environment: github_release
