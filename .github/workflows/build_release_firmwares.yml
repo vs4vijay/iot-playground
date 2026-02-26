@@ -128,7 +128,7 @@ jobs:
             0x10000 build/m5stack.esp32.m5stack_stickc_plus2/OneButton.ino.bin
 
       - name: Upload OneButton firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: M5StickCPlus2/EXamples/OneButton-main/OneButton/OneButton-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
           name: OneButton.M5StickCPlus2
@@ -221,7 +221,7 @@ jobs:
           tree
 
       - name: Upload UserDemo.M5StickCPlus2 firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: M5StickCPlus2-UserDemo/UserDemo-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
           name: UserDemo.M5StickCPlus2
@@ -292,7 +292,7 @@ jobs:
           tree
 
       - name: Upload UserDemo.M5Cardputer firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: UserDemo-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: UserDemo.M5Cardputer
@@ -372,7 +372,7 @@ jobs:
             0x10000 build/m5stack.esp32.m5stack_cardputer/M5CardRemote.ino.bin
 
       - name: Upload M5CardRemote firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: M5CardRemote/M5CardRemote/M5CardRemote-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: M5CardRemote.M5Cardputer
@@ -452,7 +452,7 @@ jobs:
             0x10000 build/m5stack.esp32.m5stack_cardputer/Resistor.ino.bin
 
       - name: Upload Resistor firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: Cardputer/Resistor/Resistor-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: Resistor.M5Cardputer
@@ -531,7 +531,7 @@ jobs:
           tree
 
       - name: Upload M5Launcher firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: M5Stick-Launcher/M5Stick-Launcher-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: M5Launcher.M5Cardputer
@@ -611,7 +611,7 @@ jobs:
             0x10000 build/m5stack.esp32.m5stack_cardputer/gb_cardputer.ino.bin
 
       - name: Upload GameBoy Cardputer firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: gb_cardputer/GameBoy-${{ steps.version.outputs.version }}.M5Cardputer.bin
           name: GameBoy.M5Cardputer
@@ -691,7 +691,7 @@ jobs:
             0x10000 build/m5stack.esp32.m5stack_stickc_plus2/evilClock.ino.bin
 
       - name: Upload Evil Clock firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: evilClock/evilClock/EvilClock-${{ steps.version.outputs.version }}.M5StickCPlus2.bin
           name: EvilClock.M5StickCPlus2
@@ -785,7 +785,7 @@ jobs:
             0x10000 build/m5stack.esp32.m5stack_cardputer/Evil-Cardputer.ino.bin
 
       - name: Upload Evil Cardputer firmware
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: Evil-M5Core2/Evil-Cardputer/Evil-Cardputer-${{ steps.version.outputs.version }}.bin
           name: Evil-Cardputer
@@ -817,7 +817,7 @@ jobs:
 
           echo "version=${version}" > $GITHUB_OUTPUT
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
