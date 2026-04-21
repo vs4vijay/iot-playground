@@ -80,7 +80,7 @@ jobs:
           echo "version=${version}" > $GITHUB_OUTPUT
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2.0.0
 
       - name: Install platform
         run: |
@@ -325,7 +325,7 @@ jobs:
           echo "version=${version}" > $GITHUB_OUTPUT
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2.0.0
 
       - name: Install platform
         run: |
@@ -405,7 +405,7 @@ jobs:
           echo "version=${version}" > $GITHUB_OUTPUT
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2.0.0
 
       - name: Install platform
         run: |
@@ -564,7 +564,7 @@ jobs:
           echo "version=${version}" > $GITHUB_OUTPUT
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2.0.0
 
       - name: Install platform
         run: |
@@ -644,7 +644,7 @@ jobs:
           echo "version=${version}" > $GITHUB_OUTPUT
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2.0.0
 
       - name: Install platform
         run: |
@@ -724,7 +724,7 @@ jobs:
           echo "version=${version}" > $GITHUB_OUTPUT
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2.0.0
 
       - name: Install platform
         run: |
